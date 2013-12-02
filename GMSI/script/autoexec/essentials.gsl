@@ -1,0 +1,118 @@
+/**
+*	ATTENTION: DO NOT CHANGE THIS FILE!
+*
+*	This file includes basic system calls, which every script needs, like the include systemcall itself. 
+*	If you change anything here, these systemcalls will malfunction!
+*
+*	This file is loaded automatically even before the autoexec.gsl
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.3
+*	@date 2008
+*	@type Library
+ */
+
+ 
+/**
+*	Prints the given message onto the GOSI console.
+*	Useful for debugging purposes.
+*	Also returns the message that you can still use it for other things.
+*/
+native string echo(string message);
+string echo(var message){return echo("" + message);}
+
+/**
+*	Same as echo with a following new line
+*/
+string echoln(var message){return echo(message + "\n");}
+
+/**
+*	Formats a float into a string
+*	significant digits is the number of fraction digits behind the first nonzero digit to be displayed
+*	Will omit tail zeros
+*	Will never use a scientific notation with E
+*	If you need a specific number of fraction digits, use formatFloat instead
+*	Maximum number of significant digits is 6 (because more digits will grant rounding errors for floats)
+*	Examples:
+*	f2s(2.4345,3) => 2.43
+*	f2s(0.333E-5,2) => 0.0000033
+*/
+native string f2s(float f, int significantDigits);
+string f2s(float f){return f2s(f,6);}
+
+/**
+*	Displays a warning message on the console
+*/
+native string warn(string message);
+
+/**
+*	This is the error function for gsl
+*	When it is called it will immediately throw an EvaluationError with the message 'message'
+*	and thus stop the evaluation.
+*	You can use it to detect situations that may not happen in your script (like when a builder has more than 11 buildings to build
+*	what would result in some not beeing visible)
+*
+*/
+native void fail(string message);
+
+/**
+*	stops script execution for <millisec> milliseconds
+*/
+native void sleep(int millisec);
+
+/**
+*	Loads and executes the gsl file named <fileName>
+*/
+native void include(string fileName);
+
+/**
+*	Treats the string <code> as gsl code, parses and evaluates it.
+*	<name> is used to specify the name of the code getting evaled. If the code contains errors this name will be printed into the error message as source file
+*/
+native void eval(string code, string name);
+
+/**
+*	Uses a standard name for the <code> and evaluates it
+*/
+void eval(string code){
+	eval(code,"<evaluated code>");
+}
+
+/**
+*	Returns the size of an array (i.e. how many keys it stores. Int + String keys)
+*/
+native int size(array ary);
+
+/**
+*	Clones the handed variable for "by value" calls/assignments
+*
+*	Since int,float,bool and string are already assigned by value, we can just return them
+*	Internal objects can't be cloned
+*	Arrays and structs are cloned by creating a new instance and copying all values
+* 
+*/
+int clone(int i){return i;}
+float clone(float i){return i;}
+string clone(string i){return i;}
+bool clone(bool i){return i;}
+object clone(object i){fail("Objects cannot be cloned!");}
+array clone(array i){
+	array a = i.type();	//Create new instance of the same type
+	for(int j:i) a[j] = i[j];	//Copy int entries
+	for(string j:i) a[j] = i[j];//Copy str entries
+	return a;
+}
+struct clone(struct i){
+	struct a = i.type();	//Create new instance of the same type
+	for(string j:i) a[j] = i[j];//Copy members
+	return a;
+}
+
+/**
+*	Sets the current script path to <path>. The script path is the path where GSL searches for
+*	included files (besides of the library paths). 
+*	The path is set for the current script file (so if this file includes other files their path is set)
+*/
+native void setScriptPath(string path);

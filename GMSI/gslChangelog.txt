@@ -1,0 +1,95 @@
+v1.16
+-Fixed an error with while loops and continue
+-Added the advanced for each loop for(a => b: c) that allows to define an iterator b
+-Fixed that local variables were type unsafe
+
+v1.15
+-Fixed an error in f2s not working always correctly
+
+v1.14
+-The echo and echoln functions are now overloaded and can take any data type (not only string), non string values will be casted to string before echoing them
+-Added the f2s method to essentials gsl which formats floats to strings using a specific count of significant digits
+
+v1.13
+-You now get useful error messages when trying to apply an operator onto a null value (previously you got a strange "operator not defined for this type" error)
+-You can now use "./PATH" in native functions that take a file name to specify that the file should be taken relatively to the current path of the script
+ (previously ./ pointed onto the path of GMSI.jar)
+
+v1.12
+-The pow function from math.gsl is now able to take a float as exponent
+-The math library is now working correctly
+-Added GSL Archive functions to io.gsl
+-Added the copyFile function to io.gsl
+
+v1.11
+-Fixed a null-error bug
+-The pattern matcher framework was reworked, it now supports better patterns
+
+v1.10
+-Fixed an error with function polymorphism and derived struct types not calling the function they belong to, but calling the function of
+their supertype
+
+v1.9
+-Fixed an error in the library function applyRecursive
+-Added a "native" call syntax for built in system calls that previously used trap statements (trap statements are still possible)
+-Did many performance optimizations that make gsl up to 20 times faster. If you want highest speed now in big loops, you should
+use local variables which are extra performance optimized (require only an array lookup instead of a hashmap lookup)
+-Fixed a typecasting error concerning structs and derived struct types
+
+v1.8
+-Added some library functions
+-The eval system call is now able to take one more string argument <name> which stands for the name of the evaluated code.
+ If an error is thrown in the evaluated code, then this <name> will be used as source file in the error message
+-Added the setScriptPath system call to essentials.gsl
+-Due to a bug, if you included a library twice, it was executed twice in some situations. This is fixed, libraries
+will only be executed once, no matter how often you include them
+-Fixed that declaring derived variables (from typedef a extends b statments) without initialization caused a null exception
+-Fixed that if an generic array variable was cast implicitly to another type, it remained that type in other statements.
+-A bug prevented derefer names (*pointer) to be evaluated. This is fixed, you are now able to use pointers correctly
+-Fixed that structs and arrays couldn't be compared properly
+-Fixed that removing array/struct members while iterating over them with a foreach loop produced a null error
+-Added some functions to common.gsl 
+
+v1.7
+-The strtotype operator is now able to parse any complex type like "array<a,b<d>,c*>**" not only simple types
+-Added the warn system call to essentials.gsl, which does the same like echo, but highlights the message as a warning
+
+
+v1.6
+-the typeof operator was removed. Instead, the type operator was introduced which offers more beautiful syntax 
+(I am sorry for no backward compatibility, however I think the typeof operator wasn't used much)
+-added the strtotype and the typetostr operators for conversion of types to/from strings
+-added the call operator which allows the calling of functions which name is handed during runtime as a string
+
+v1.5
+-You can now use the escape sequence \0 in strings to write a 0 char. This can be used for null termination of output
+-Added the readString and the openFile system call
+-Added the library io.gsl for convenient in-/output from/to files
+-Added the library pattern.gsl for pattern matching with Java Pattern syntax. It is much mightier as matcher.gsl
+but it cannot add macros. However its use should be preferred over the use of matcher.gsl (if possible).
+-Removed the functions replace and replaceAll from string.gsl because they are now provided by pattern.gsl
+-Fixed an error with the Matcher, that it didn't match new lines with %e
+-Added the functions toUpperCase and toLowerCase to string.gsl
+-All system calls now grant better error messages if a null parameter is passed to them where null is not allowed
+-Added the library common.gsl where common functions that match nowhere else are put
+-Added the echoln function to essentials.gsl, which is the same as echo but adds a new line at the end of the message
+-Fixed some bugs with the stack syntax of arrays
+-Added the missing chapters echoln, Stack Syntax of Arrays & Array Index Auto Creation to the manual
+
+
+v1.4
+-Clarified some error messages
+
+v1.3
+-Fixed that the constructor of a derived type returned a variable of the supertype, not the derived one
+
+v1.2
+-Fixed some small errors which the parser
+-The parser now displays useful information on syntax errors in most cases
+-No strange error is thrown if the variable over which a foreach loop should iterate is null. Instead, the loop will simply be skipped
+v1.1
+-Fixed a bug with the suffix operators ++/-- which returned the in-/decremented value instead of the unchanged one
+-Added the typeof() operator
+-The import system call no longer includes the same file twice if called twice for the same file name
+-The foreach loop no longer crashes with a null pointer exception when not defining the iterator in its head but before
+

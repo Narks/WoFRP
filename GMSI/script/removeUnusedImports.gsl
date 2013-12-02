@@ -1,0 +1,136 @@
+/**
+*	This script opens a specified map and checks for every imported file,
+*	if it is referenced in some string in the map. If it isn't, it gets removed.
+*
+*	The cleaned map is saved in the output folder using the same name as the input
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2008
+*	@param A map to be applied on
+*/
+
+include("string.gsl");
+include("dialog.gsl");
+include("utilities.gsl");
+
+string standardFiles = 
+ "war3map.w3e war3map.w3i war3map.wtg war3map.wct war3map.wts war3map.j war3map.shd war3mapMap.blp war3mapMap.b00"
++"war3mapMap.tga war3mapPreview.tga war3map.mmp war3mapPath.tga war3map.wpm war3map.doo war3mapUnits.doo war3map.w3r"
++"war3map.w3c war3map.w3s war3map.w3u war3map.w3t war3map.w3a war3map.w3b war3map.w3d war3map.w3q war3mapMisc.txt"
++"war3mapSkin.txt war3mapExtra.txt war3map.imp";
+
+//the recursive cleaning function
+bool findRecursive(string importName, var currentDir, string currentPath){
+
+	//Are we in a struct? --> check every struct member for the import
+	if(currentDir instanceof struct){
+		for(string s: currentDir){
+			if(findRecursive(importName,currentDir[s],currentPath + s + ".")) return true;		
+		}
+		
+	//Are we in an array? --> check every entry for the import
+	} else if(currentDir instanceof array){
+		for(string s: currentDir){
+			if(findRecursive(importName,currentDir[s],currentPath + s + ".")) return true;		
+		}
+		for(int s: currentDir){
+			if(findRecursive(importName,currentDir[s],currentPath + s + ".")) return true;		
+		}
+		
+	//Are we at a string: check the string for the import
+	} else if(currentDir instanceof string){
+		if(strpos(currentDir,importName)!= -1){
+			//found!
+			echo("Import " + importName + " was found in " + currentPath + "\n");
+
+			return true;
+		}
+	}
+	
+	//Nowhere found? return false
+	return false;
+} 
+
+bool find(string importName, Map map){
+
+	if(findRecursive(importName,map.info,"info.")) return true;
+	if(findRecursive(importName,map.objects,"objects.")) return true;
+	if(findRecursive(importName,map.script,"script.")) return true;
+	if(findRecursive(importName,map.sounds,"sounds.")) return true;
+	if(findRecursive(importName,map.internal,"internal.")) return true;
+	return false;
+}
+
+//Fetch the map to be cleaned, either from the command line arguments or from a dialog
+string mapFile = (@args[0] == null?fileDialog("Choose a map to be cleaned",@inputPath,".w3x"):@args[0]); 
+
+Map map = loadMap(mapFile,false,false);
+
+int numRemoved = 0;
+int numFound = 0;
+int numDeclined = 0;
+int total = size(map.imports);
+for(int num: map.imports){
+	Import currentImport = map.imports[num];
+
+	string importName = currentImport.path;
+	if(currentImport.useStandardPath) importName = "war3mapImported\\" + importName;
+
+	//check if the import is in the standard files list
+	if(strpos(standardFiles,importName)!= -1){
+		numFound++;
+		echo(currentImport.path + " was not removed because it overrides a standard file");
+		continue;
+	}
+	
+	
+	//check if the import is inside a mpq, if so, it may not be removed, because it could be used to overwrite some basic settings
+	if(exportFile(null,importName,"temp/" + importName)){
+		numFound++;
+		echo(currentImport.path + " was not removed because it overrides a file in the mpqs and could be used to overwrite base values\n");
+		continue;
+	}
+	
+	//Import found? -> check next
+	if(find(importName,map)){
+		numFound++;
+		continue;	
+	}
+	
+	//Not found? -> try to escape the backslash (in trigger files for example) and try again
+	importName = replaceAll(importName,"\\\\","\\\\\\\\");
+	echo(importName + "\n");
+	if(find(importName,map)){
+		numFound++;
+		continue;
+	}
+	
+	//Still not found: Ask the user to remove the import
+	if(confirmDialog("Remove unused import?","The import " + currentImport.path + " wasn't found in your map. Do you want to remove it?",BUTTONS_YES_NO)){
+		//User said "yes", so remove it
+		unset(map.imports[num]);
+		echo("Import " + currentImport.path + " was removed\n");
+		numRemoved++;
+	} else {
+		//User said no -> skip this one
+		numDeclined++;
+		echo("Import " + currentImport.path + " was not removed, user wants to keep it\n");
+	}
+
+}
+
+echo("\n\n******************************\nCleaning done!\n"
+		+ "Total number of imports:    " + total + "\n"
+		+ "Found imports:              " + numFound + "\n"
+		+ "Removed imports:            " + numRemoved + "\n"
+		+ "Not found but kept by user: " + numDeclined + "\n******************************");
+		
+string outpath = @outputPath + "/" + map.fileName;
+echo("\n\nSaving map to " + outpath +"\n\n");		
+saveMap(map,outpath);
+		
+		
+		

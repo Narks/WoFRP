@@ -1,0 +1,23 @@
+include("dialog.gsl");
+include("image.gsl");
+typedef Image extern;
+Image img = loadImage("export/omfg.blp");
+warn("DONE");
+fail("this script is not finished yet and unable to be executed");
+string mapFile = (@args[0] == null?fileDialog("Choose a map",@inputPath,".w3x"):@args[0]); 
+string loadScreen = (@args[1] == null?fileDialog("Choose a load screen",@inputPath,".jpg,.png"):@args[1]); 
+
+if(mapFile == null) fail("Choose a map file!");
+if(loadScreen == null) fail("Choose a load screen file!");
+
+Map map = loadMap(mapFile);
+Image screen = loadImage(loadScreen);
+
+if(getImageWidth(screen)!=1024||getImageHeight(screen)!=768){
+	screen = rescaleImage(screen,1024,768);
+}
+
+Image cur;
+//Upper left
+cur = getSubImage(screen,0,0,512,512);
+saveImageTGA(cur,"temp/Generic");

@@ -1,0 +1,31 @@
+/**
+*	This file contains system calls for stopping the elapsed time.
+*	Useful to test the performance of your scripts/functions
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.1
+*	@date 2008
+*	@type Library
+*/
+
+/**
+*	Creates (if it doesn't exits yet)  and starts a stopwatch with name <watchName>
+*/
+native void startWatch(string watchName);
+
+/**
+*	Resets the stopwatch with name <watchName> to 0
+*/
+native void resetWatch(string watchName);
+
+/**
+*	Stops the stopwatch with  name <watchName> and returns its time in millisec.
+*/
+native int stopWatch(string watchName);
+
+/**
+*	Returns the time in millisec of stopwatch <watchName> without stopping it
+*/
+native int getWatchTime(string watchName);

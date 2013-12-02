@@ -1,0 +1,31 @@
+/**
+*	This is a basic example script for replacing macros in your map's strings with their output, which is useful for generic tooltip generation.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2008
+*	@param A map to be applied on
+*/
+
+
+include("dialog.gsl");
+
+//Fetch the map to be applied on, either from the command line arguments or from a dialog
+string mapFile = (@args[0] == null?fileDialog("Choose a map",@inputPath,".w3x"):@args[0]); 
+
+//Load the map
+Map map = loadMap(mapFile,false,true);
+
+//Get a basic matcher
+Matcher m = getBasicMatcher()
+
+//Apply the matcher on all strings in the map
+int num = applyRecursive(m,map);
+echo("checked " + num + " strings in the map for macros\n");
+
+//Save the map to the output folder
+string outpath = @outputPath + "/" + map.fileName;
+echo("\n\nSaving map to " + outpath +"\n\n");		
+saveMap(map,outpath);

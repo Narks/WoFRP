@@ -1,0 +1,37 @@
+/*
+	WCRPExtractorLib.gsl
+	Library providing functions to extract object data from maps and convert
+	it to a GMSI format.
+	
+	Author: Narks
+*/
+
+include("objects.gsl");
+include("io.gsl");
+
+void ExtractAll()
+{
+	Writer lFile = openFileWrite("extract_gsl.txt", true);
+	ExtractUnit(lFile, "H000");
+}
+
+void ExtractUnit(Writer aFile, string aUnitId)
+{
+	
+	Wc3obj lUnit = map.objects[aUnitId];
+	
+	for (string sKey: lUnit)
+	{
+		echo("sKey=" + sKey + " type " + (lUnit[sKey]).typetostr + ", ");
+		echo((string)lUnit[sKey]);
+		if (lUnit[sKey] instanceof array)
+		{
+			echo(" is an array ");
+			for (string sSubkey: lUnit[sKey])
+			{
+				echo("sSubkey=" + sSubkey);
+			}
+		}
+		echo("\n");
+	}
+}

@@ -1,0 +1,467 @@
+/**
+*	This file contains the basic definitions for all data types a map uses.
+*	The main data type of a WC3 map is the struct map. It contains all other sections of a map
+*
+*	DON'T CHANGE THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING, OR BAAAAD THINGS MAY HAPPEN
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*
+*/
+
+/**************************************************************************************
+*					Object section (stuff from the object editor)
+****************************************************************************************/
+
+typedef Wc3obj extends array<string,float,int>;	//A wc3 object editor object
+typedef Ability extends	Wc3obj;	
+typedef Unit extends Wc3obj;
+typedef Doodad extends Wc3obj;
+typedef Destructable extends Wc3obj;
+typedef Upgr extends Wc3obj;
+typedef Item extends Wc3obj;
+typedef Buff extends Wc3obj;
+
+
+/**************************************************************************************
+*					Script section (triggers and stuff)
+****************************************************************************************/
+
+/**
+*	A trigger
+*/
+typedef Trigger struct{
+	string name;
+	string comment;
+	bool isComment;
+	bool isEnabled;
+	bool isCustomText;
+	bool isNotInitiallyOn;
+	bool isRanOnMapInit;
+	int	category;
+	object guiData = null;
+	string code;
+}
+
+/**
+*	A trigger category (the folders in the trigger editor)
+*/
+typedef TriggerCategory struct{
+	string name;
+	bool isComment;
+	int index;
+}
+
+/**
+*	A user defined global variable (udg_...). Any variable that was defined in the GUI dialogue in the World Editor
+*/
+typedef GlobalVariable struct{
+	string name;
+	string typ;
+	int unknown;
+	bool isArray;
+	int arraySize;
+	bool isInited;
+	string initValue;
+}
+
+/**
+*	The script section of a map containing the header trigger and comment,
+*	all triggers, global variables and trigger categories
+*/
+typedef ScriptSection struct{
+	string 					headerCode 		= null;		//The header custom script code
+	string 					headerComment 	= null;		//The header comment
+	array<TriggerCategory> 	categories 		= array();	//The Trigger categories
+	array<GlobalVariable> 	variables 		= array();	//The GUI-defined global variables
+	array<Trigger> 			triggers 		= array();	//The triggers
+}
+
+
+
+/**************************************************************************************
+*					The info section (general information about the map)
+****************************************************************************************/
+
+/**
+*	Map flags (names should be self-explanatory) 
+*/
+typedef StructMapFlags struct{
+	bool	hideMinimapInPreviewScreens;
+	bool	modifyAllyPriorities;
+	bool	meleeMap;
+	bool	playableMapSizeWasLargeAndHasNeverBeenReducedToMedium;
+	bool	maskedAreasArePartiallyVisible;
+	bool	fixedPlayerSettingsForCustomForces;
+	bool	useCustomForces;
+	bool	useCustomTechtree;
+	bool	useCustomAbilities;
+	bool	useCustomUpgrades;
+	bool	mapPropertiesMenuOpenedAtLeastOnceSinceMapCreation;
+	bool	showWaterWavesOnCliffShores;
+	bool	showWaterWavesOnRollingShores;
+	bool 	unknown1;
+	bool 	unknown2;
+	bool 	unknown3;
+}
+
+/**
+*	A player, as defined using scenario->player properties in the world editor 
+*/
+typedef Info_player struct{
+	int			number;
+	int			typ;					//1=Human, 2=Computer, 3=Neutral, 4=Rescuable
+	int			race;					//1=Human, 2=Orc, 3=Undead, 4=Night Elf
+	bool		fixedStartPosition;
+	string		name;
+	float		startX;
+	float		startY;
+	array<bool>	allyLowPriorityFlags;
+	array<bool>	allyHighPriorityFlags;
+	
+}
+
+
+/**
+*	A player force, as defined using scenario-> forces / ally priorities
+*/
+typedef Info_force struct{
+	bool		allied;
+	bool		alliedVictory;
+	bool		shareVision;
+	bool		shareUnitControl;
+	bool		shareAdvancedUnitControl;
+	array<bool>	playersInForce;			
+	string		name;
+}
+
+/**
+*	Information about the map's loading screen
+*/
+typedef LoadScreenSection struct{
+	int				presetNum; 	//The index in the dropdownlist of campaign screens, -1 if none or custom loading screen is chosen
+	string			customPath;	//If custom load screen model is chosen, then this is the path of it
+	string			title;
+	string			subtitle;
+	string			text;
+}
+
+/**
+*	A RGB color (including alpha channel)
+*/
+typedef Color struct{
+	int		red;
+	int		green;
+	int		blue;
+	int		alpha = 255;
+}
+
+/**
+*	Information about global effects in your map like global weather, terrain fog and water tinting
+*/
+typedef EffectsInfoSection struct{
+	int		useTerrainFog;				//(0 = not used, greater 0 = index of terrain fog style dropdown box)
+	float	fogStartZ;
+	float	fogEndZ;
+	float	fogDensity;
+	Color	fogColor = null;
+	int		globalWeatherId; 			//(0 = none, else it's set to the 4-letter-id of the desired weather found in TerrainArt\Weather.slk)
+	string	customSoundEnvironment; 	//(set to the desired sound lable)
+	string	customLightEnvironment;		//tileset id of the used custom light environment
+	Color	waterTinting = null;
+}
+
+/**
+*	Less important map information
+*/
+typedef MiscInfoSection struct{
+	int		usedGameDataSet;		//(index in the preset list, 0 = standard)
+}
+
+/**
+*	The map's information section containing all general information about the map
+*/
+typedef InfoSection struct{
+	string				name;
+	string 				author;
+	string				description;
+	string				playersRecommended;
+	StructMapFlags		flags;
+	int					numSaves;
+	int					editorVersion;
+	array<float>		cameraBounds;
+	array<int>			cameraBoundComplements;
+	int					playableWidth;
+	int					playableHeight;
+
+	//Loading screen stuff
+	LoadScreenSection	loadScreen = null;
+	
+	//unimportant stuff
+	MiscInfoSection		misc = null;
+	
+	//Effects like weather, fog, water tinting ...
+	EffectsInfoSection	effects = null;
+
+	//player and force data
+	array<Info_player>	players = null;
+	array<Info_force>	forces = null;
+}
+
+
+/**************************************************************************************
+*	The preplaced objects section (all doods, units and items that are placed on the map in the world editor)
+****************************************************************************************/
+
+//An ability modification for a preplaced Object(see "struct placedObject" below)
+typedef Po_abilModification struct{
+	string 	abilID;		//This ability's ID
+	bool 	active;		//Is this ability active? (only for autocast abilities)
+	int 	level = 1;	//The level of this ability
+}
+
+//An inventory item for a preplaced Object(see "struct placedObject" below)
+typedef Po_inventoryItem struct{
+	string 	itemID;		//This item's ID (can also be a random item d)
+	int 	slot;		//In which slot the item is (starting at 0, for the upper left slot, ranging up to 5 for the lower right slot)
+}
+
+//A dropped item for a preplaced Object(see "struct placedObject" below)
+typedef Po_droppedItem struct{
+	string 	itemID;		//This item's ID (can also be a random item d)
+	int 	percentage;	//percentual chance of choice
+}
+
+//A random unit in a custom table for a preplaced object (see "struct placedObject" below)
+typedef Po_randomUnit struct{
+	string 	unitID;		//This unit's id (can also be a random unit id)
+	int 	percentage;	//percentual chance of choice
+}
+
+//A preplaced object
+typedef PlacedObject struct{
+
+	//Important values (if you create a new unit, you have to change these, as there is no default for them (if you create items, you have to set level to 0 in addition!!!))
+	string						typeID;							//The unit/item ID of this preplaced object (can also be a random ID)
+	float						x;								//X-coordinate
+	float						y;								//Y-coordinate
+	float						z;								//Z-coordinate (the height of the terrain the unit is placed on
+	int							owner;							//the player number of the player who is owning this unit (0 = red, ... , 16 = neutral passive)
+
+	//Less important values
+	float						rotation 				= 0.0;	//The unit's rotation in rad (i.e. 0 <= rotation < 2 pi)
+	float						scaleX 					= 1.0;	//x scale
+	float						scaleY 					= 1.0;	//y scale
+	float						scaleZ 					= 1.0;	//z scale
+	int							hitPoints 				= -1;	//the unit's hitPoints (-1 = use default)
+	int							manaPoints 				= 0;	//the unit's manaPoints (-1 = use default, 0 = unit doesn't have mana)
+
+	//barely used values
+	int							mapItemTablePointer 	= -1;	//points to a dropped item Table for items dropped upon death(-1 = no table used
+	array<array<Po_droppedItem>>droppedItemSets			= null;	//dropped Item sets (can only be used if the itemTablePointer is -1, otherwise the pointed itemTable is used)
+	array<Po_inventoryItem>		itemsInInventory		= null;	//items in this unit's Inventory
+	int							goldAmount				= 12500;// gold amount (standard is 12500)
+	float						targetAquisition		= -1;	//aquisition mode (-1 =  normal, -2 = camp)
+	int							heroLevel				= 1;	//hero Level (set to 1 for non hero units and items)
+	int							STR						= 0;	//hero Strength (0 = use default or no hero)
+	int							AGI						= 0;	//hero Agility (0 = use default or no hero)
+	int							INT						= 0;	//hero Intelligence (0 = use default or no hero)
+	array<Po_abilModification>	abilityModifications	= null;	//ability modifications for this unit
+	int							customColor				= -1;	//custom color (-1 = none)
+	int							waygateDestination		= -1;	//active destination number (-1 = deactivated, else itÄ's the creation number of the target rect as in war3map.w3r)
+
+	int							randUnitFlag			= 0;	//0 = no random unit or any passive building/item, 1 = random unit from random group, 2 = random unit from custom table
+	
+	//Only if randUnitFlag == 0, otherwise these values are ignored
+	int							level					= 1;	//The level of the random unit/item (-1 = any) (1 for non random units, 0 for items)
+	int							itemClass				= 0;	//Item class of the random item (0 for units, 0 = any, 1 = permanent,....)
+	
+	//Only if randUnitFlag == 1, otherwise these values are ignored
+	int							rndUnitGrpNum;					//which group from the global table
+	int							rndUnitGrpPos;					//which position of this group
+
+	//Only if randUnitFlag == 2, otherwise these values are ignored
+	array<Po_randomUnit>		availableUnits			= null;	//which units are available for this custom table
+	
+	//Don't touch these values (unless you know what you are doing)
+	int							flags 					= 2;	//flags (normally set to 2)
+	int							unknownBytes 			= 0;	//unknown bytes (always 0)
+	int							variation 				= 0;	//Variation of this unit/item ?!? (0 most of the time)
+}
+
+
+//A preplaced doodad
+typedef PlacedDood struct{
+	//Important values (if you create a new unit, you have to change these, as there is no default for them (if you create items, you have to set level to 0 in addition!!!))
+	string						typeID;							//The unit/item ID of this preplaced object (can also be a random ID)
+	float						x;								//X-coordinate
+	float						y;								//Y-coordinate
+	float						z;								//Z-coordinate (the height of the terrain the doodad is placed on)
+	int							variation 				= 0;	//Variation of this dood
+
+	//Less important values
+	float						rotation 				= 0.0;	//The dood's rotation in rad (i.e. 0 <= rotation < 2 pi)
+	float						scaleX 					= 1.0;	//x scale
+	float						scaleY 					= 1.0;	//y scale
+	float						scaleZ 					= 1.0;	//z scale
+	int							hitPointsPercent		= 100;	//the tree's percentual hitPoints
+
+	//barely used values
+	int							mapItemTablePointer 	= -1;	//points to a dropped item Table for items dropped upon death(-1 = no table used
+	array<array<Po_droppedItem>>droppedItemSets			= null;	//dropped Item sets (can only be used if the itemTablePointer is -1, otherwise the pointed itemTable is used)
+
+	
+	//Don't touch these values (unless you know what you are doing)
+	int							flags 					= 2;	//flags (normally set to 2) 0: invisisble and non-solid tree; 1: visible, non-solid tree, 2: normal tree (visible & solid)
+}
+
+//Special doodads, which can't be selected in the editor anymore once they re placed, for example doods in the "Cliffs" section behave like this
+typedef PlacedSpecialDoodad struct{
+	string	typeID;	//The dood ID of this preplaced object (can also be a random ID)
+	int		x;		//X-coordinate (in tile coordinates, not float!)
+	int		y;		//Y-coordinate (in tile coordinates, not float!)
+	int		z = 0;	//Z-coordinate (?)
+}
+
+/**
+*	The placed objects section, deviding placed objects into objects (units and items) doodads and special doodads
+*/
+typedef PlacedObjects struct{
+	array<PlacedObject>			objects			= null;	//placed units and items
+	array<PlacedDood>			doods			= null;	//placed destructables, doodads and trees
+	array<PlacedSpecialDoodad>	specialDoods 	= null;	//placed special doods, like "Cliff-type" doods (see above)
+}
+
+
+
+/**************************************************************************************
+*	The environment section (containing the whole heightmap, terrain textures and tileset)
+****************************************************************************************/
+
+/**
+*	A tile (one field in the object editor which can be assigned with a texture, raised and so on) (a 64x64 map consists of 65x65 tiles for example (one on the edge of every "square"))
+*/
+typedef Tile struct{
+	int			height;
+	int			waterLevel;
+	int			texture;
+	int			textureDetails;
+	int			cliffTexture;
+	int			layerHeight;
+	
+	bool		isBoundary1;
+	bool		isRamp;
+	bool		isBlight;
+	bool		waterEnabled;
+	bool		isBoundary2;
+}
+
+/**
+*	The environment section containg tilesets and the two dimensional tiles array representing the heightmap of this map
+*/
+typedef EnvSection struct{
+	string				tileset;
+	bool				useCustomTileset;
+	array<string>		groundTilesUsed		= null;
+	array<string>		cliffTilesUsed		= null;
+	int					mapWidth;
+	int					mapHeight;
+	float				centerOffsetX;
+	float				centerOffsetY;
+	array<array<Tile>> 	tiles;						//The tiles of this map indexed [y] [x]
+}
+
+
+
+/**************************************************************************************
+*	The trigger regions (rects) section (containing trigger regions (rects) which are defined using layer->regions)
+****************************************************************************************/
+/**
+*	A rect, as defined in the world editor
+*/
+typedef Rect struct{
+	float	left;
+	float	right;
+	float	bottom;
+	float	top;
+	string	name;
+	string	weatherEffectID;	//"" if no weathereffect is chosen
+	string	ambientSound;
+	Color	color;
+}
+
+
+
+/**************************************************************************************
+*	The sounds section (containing sounds which are defined using the sound editor)
+****************************************************************************************/
+/**
+*	A sound, as defined in the sound editor
+*/
+typedef Sound struct{
+	string	name;				//The sound ID name like "gg_snd_HumanGlueScreenLoop1"
+	string	file;				//The path/name of the sound file like "Sound\Ambient\HumanGlueScreenLoop1.wav"
+	string	eaxEffects;			//like DefaultEAXON
+	bool	looping;
+	bool	is3dSound;
+	bool	stopWhenOutOfRange;
+	bool	music;
+	bool	unknownFlag;
+	int		fadeInRate;
+	int		fadeOutRate;
+	int		volume = -1;		//(-1=use default value)
+	float	pitch;
+	int		channel;			//0=General, 1=Unit Selection, 2=Unit Acknowledgement, 3=Unit Movement, 4=Unit Ready, 5=Combat, 6=Error, 7=Music, 8=User Interface, 9=Looping Movement, 10=Looping Ambient, 11=Animations, 12=Constructions, 13=Birth, 14=Fire
+	float	minDistance;
+	float	maxDistance;
+	float	distanceCutoff;
+	float	unknownFloat1;
+	int		unknownInt1;		//-1 or 8
+	float	unknownFloat2;
+	float	unknownFloat3;
+	int		unknownInt2; 		//(-1 or 127)
+	float	unknownFloat4;
+	float	unknownFloat5;
+	float	unknownFloat6;
+}
+
+
+
+/**************************************************************************************
+*	The imports section (containing imports which are defined using the import editor)
+****************************************************************************************/
+/**
+*	An import, as defined in the import editor
+*/
+typedef Import struct{
+	bool	useStandardPath	= false;	//if set, then "war3mapImported\<path>" the real path in the mpq file, otherwise it is plain <path>
+	string 	path;						//The path of the import in the w3x file
+}
+
+
+/********************************************************************************************************************************
+* 		The map struct: Represents a WC3 map, should not be created manually via map(), but only by using the appropriate function to load a map
+*********************************************************************************************************************************/
+typedef InternSection struct{
+	array<string>	trigstrs	= null; //The not found trigger strings (all strings that recognized are automatically inlined, so you find here only trigstrs that weren't found in any loaded section yet.)
+	array<string>	guiStrings	= null;	//Any strings that were found in GUI Trigger structures, these will be loaded as soon as you load the map's triggers, but changing them has no effect. They are just to search GUI Structures for things like imported files and such things...
+}
+typedef Map struct{
+	string			fileName	= null; //The name of the map file, when it was opened
+	InfoSection 	info		= null;	//General map information
+	EnvSection		environment	= null;	//The environment (the tileset and the specific tiles)
+	object 			mapHandle	= null;	//An internal handle for loading / saving / deleting files from the maps archive. DON'T CHANGE or you won't be able to load or save files from this map anymore!
+	array<Wc3obj> 	objects 	= null;	//The World Editor objects of this map (unis, abilities,...)
+	PlacedObjects	placed 		= null;	//The placed units, items, destructables and trees on the map
+	ScriptSection 	script 		= null;	//The triggers of this map (including gui trigger, comments and JASS)
+	array<Rect>		rects		= null;	//The rects (regions) of this map
+	array<Sound>	sounds		= null; //The sounds of this map
+	array<Import>	imports		= null; //The list of imported files
+	InternSection	internal	= null; //Internal stuff, which is only there because gosi doesn't parse really the whole map yet
+	}
+
+

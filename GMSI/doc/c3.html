@@ -1,0 +1,198 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c4.html">NEXT CHAPTER</a>
+	 | <a href="c2.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">3. Operators</div>
+Note:
+Most operators in gsl are totally equivalent to the operators in C / JAVA</p><div class="docuSubCapt"><a name="1">3.1 Assignments</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>A new value is assigned to a variable in GSL by the expression (exactly like in the declaration when assigning an initial value):
+<div class="docuCode">VARNAME <span class="docuCodeOp">=</span> NEW_VALUE</div>
+where &lt;VARNAME&gt; is the name of the variable to be changed and NEW_VALUE is the desired new value.</p>
+
+<p>Note that the value of this expression is the value of the right side (NEW_VALUE).
+So 
+<div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 1<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> j <span class="docuCodeOp">=</span> 2<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> k <span class="docuCodeOp">=</span> 3<span class="docuCodeOp">;</span>
+ 
+i <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>j <span class="docuCodeOp">=</span> k<span class="docuCodeOp">)</span> <span class="docuCodeOp">+</span> 10<span class="docuCodeOp">;</span></div>
+The last line will first assign k's value 3 to j, 3 is also the value of the bracket which is then
+added to 10 resulting in i beeing 13.</p><div class="docuSubCapt"><a name="2">3.2 By Reference / By Value</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>In GSL, the types int,bool,string,float are evaluated by value, so if you assign one int variable to another int variable, the will only share their value. If you then alter one of both, the other one will keep its value. This is called assignment by value, since you only assign the var value, not a reference to the variable.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">int</span> i1 <span class="docuCodeOp">=</span> 0<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i2 <span class="docuCodeOp">=</span> i1<span class="docuCodeOp">;</span><span class="docuCodeComment">//i1 and i2 are 0 now</span>
+i1 <span class="docuCodeOp">=</span> 10<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//i2 is still 0</span></div></p>
+
+<p>If you need a reference to an int,float,bool or string, you can use pointers like in C. However, to not make things to complicated and since they are only rarely used, these are discussed only in later chapters.</p>
+
+<p>The types array and struct (and object) are assigned by reference. So, if you assign one array variable to another or hand an array to a function, they will point to the same array instance. So, if you then change the values of one, the other one will also have its values changed, since they are the same.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">array</span> b <span class="docuCodeOp">=</span> a<span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bla"</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//b[0] is now also "bla" since a and b are the same array instance</span></div></p>
+
+<p>Assigning arrays or structs by values can be done by cloning them and passing the clone. The clone function, which doesn't do more than just creating a new copy of the struct/array and copying all entries/members is defined in the essentials.gsl and thus doesn't have to be included manually.</p>
+
+<p>Example: array by value
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">array</span> b <span class="docuCodeOp">=</span> <span class="docuCodeKeyword">clone</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bla"</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//b[0] is now not "bla" since a and b are different arrays</span></div></p><div class="docuSubCapt"><a name="3">3.3 Arithmetic Operators</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>For the types int and float, the following arithmetic operators are defined in gsl:</p>
+
+<p><ul class="docList"><li>-x (negation)</li><li>x+y (addition)</li><li>x-y (substraction)</li><li>x*y (multiplication)</li><li>x/y (division)</li><li>x%y (remainder of the division x/y, also called modulo)</li></ul></p>
+
+<p>If both operands where int, the result will also be of type int, if any of the two was float then the result will be a float.</p>
+
+<p>Operator precedence:
+The operations *,/,% are evaluated before + and -. If two operators have the same precedence, than they will be evaluated from the left to the right.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">int</span> result1 <span class="docuCodeOp">=</span> 1 <span class="docuCodeOp">-</span> 2 <span class="docuCodeOp">-</span> 3<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> result2 <span class="docuCodeOp">=</span> 1 <span class="docuCodeOp">-</span> 2 <span class="docuCodeOp">*</span> 3<span class="docuCodeOp">;</span></div>
+result1 is (1 - 2) - 3 == -4, since equal operators are evaluated from the left to the right.
+result2 is 1 - (2 * 3) == -5, since multiplication precedes substraction.</p><div class="docuSubCapt"><a name="4">3.4 String Concatenation</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Concerning strings, the operator + concatenates two strings. This concatenation precedes any arithmetic addition. So, if one of the two operands is a numeric type and the other one is a string, then the numeric
+type will be cast to string and then concatenated to the string, not the other way round.</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"foo"</span> <span class="docuCodeOp">+</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//s is "foobar" now</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 2<span class="docuCodeOp">;</span>
+<span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"3"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">string</span> t <span class="docuCodeOp">=</span> i <span class="docuCodeOp">+</span> s<span class="docuCodeOp">;</span></div>
+t is now "23" (not "5"!) because concatenation precedes arithmetic addition.</p><div class="docuSubCapt"><a name="5">3.5 Convenience Operators</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>All arithmetic operators and the string concatenation can be shortened if combined with an assignment that matches the form "a = a OP b" to "a OP= b"</p>
+
+<p>So for example:
+<div class="docuCode">i <span class="docuCodeOp">=</span> i <span class="docuCodeOp">+</span> 4<span class="docuCodeOp">;</span>
+j <span class="docuCodeOp">=</span> j <span class="docuCodeOp">%</span> 3<span class="docuCodeOp">;</span></div>
+can be written as:
+<div class="docuCode">i <span class="docuCodeOp">+</span><span class="docuCodeOp">=</span> 4<span class="docuCodeOp">;</span>
+j <span class="docuCodeOp">%</span><span class="docuCodeOp">=</span> 3<span class="docuCodeOp">;</span></div></p>
+
+<p>But note that this puts an implicit bracket around the second operand, so:
+<div class="docuCode">a <span class="docuCodeOp">=</span> a <span class="docuCodeOp">*</span> b <span class="docuCodeOp">+</span> c</div>
+is not equal to
+<div class="docuCode">a <span class="docuCodeOp">*</span><span class="docuCodeOp">=</span> b <span class="docuCodeOp">+</span> c</div>
+since in the first case a*b is evaluated before the addition with c, but in the second case b+c is first evaluated and then multiplied with a.</p><div class="docuSubCapt"><a name="6">3.6 Increment and Decrement</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>GSL supports the post increment operator VAR++ and the post decrement operator VAR--
+These expressions evaluate to the value of &lt;VAR&gt; <b>prior to</b> the inc-/decrementation and they increment/decrement &lt;VAR&gt;.</p>
+
+<p>So, these two lines are semantically equivalent:
+<div class="docuCode">i <span class="docuCodeOp">=</span> i <span class="docuCodeOp">+</span> 1<span class="docuCodeOp">;</span>
+i<span class="docuCodeOp">+</span><span class="docuCodeOp">+</span><span class="docuCodeOp">;</span></div></p><div class="docuSubCapt"><a name="7">3.7 Comparisons</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>A comparison is an oparator that takes two values and returns a boolean value.</p>
+
+<p>For all variable types, gsl supports the comparisons
+<ul class="docList"><li>x==y (x equals y)</li><li>x!=y (x not equals y)</li></ul></p>
+
+<p>For numerical, boolean and string values, these comparisons test if the two variables contain the same value.
+For structs and arrays, they test if x and y really hold the same instance of an array/struct, NOT if their content is equal!</p>
+
+<p>In addition, the following operators are defined only for numerical types:
+<ul class="docList"><li>x&lt;y (x is less than y)</li><li>x&gt;y (x is greater than y)</li><li>x&lt;=y (x is less or equal to y)</li><li>x&gt;=y (x is greater or equal to y)</li></ul></p>
+
+<p>Examples:
+<div class="docuCode">3&lt;4<span class="docuCodeOp">;</span>						<span class="docuCodeComment">//True, since 3 is less than 4</span>
+1&lt;<span class="docuCodeOp">=</span>1<span class="docuCodeOp">;</span>						<span class="docuCodeComment">//True, since 1 is less or equal to 1</span>
+<span class="docuCodeOp">(</span><span class="docuCodeString">"foo"</span> <span class="docuCodeOp">+</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">)</span> <span class="docuCodeOp">=</span><span class="docuCodeOp">=</span> <span class="docuCodeString">"foobar"</span><span class="docuCodeOp">;</span><span class="docuCodeComment">//True, since both sides represent the same literal</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">=</span><span class="docuCodeOp">=</span><span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//False, both arrays share the same content (nothing) but they aren't the same instance</span>
+ 
+<span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">array</span> b <span class="docuCodeOp">=</span> a<span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">=</span><span class="docuCodeOp">=</span>b<span class="docuCodeOp">;</span>				<span class="docuCodeComment">//True, a and b contain the same instance of an array</span></div></p><div class="docuSubCapt"><a name="8">3.8 Logical Operators</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>For boolean types, the following logical operators are defined in GSL:
+<ul class="docList"><li>x&&y (x and y)</li><li>x||y (x or y)</li><li>!x (not x)</li></ul></p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">bool</span> b<span class="docuCodeOp">;</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeKeyword">true</span> <span class="docuCodeOp">|</span><span class="docuCodeOp">|</span> <span class="docuCodeKeyword">false</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//true</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeKeyword">true</span> <span class="docuCodeOp">&</span><span class="docuCodeOp">&</span> <span class="docuCodeKeyword">false</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//false</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">!</span><span class="docuCodeKeyword">false</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//true</span></div></p>
+
+<p>Note that GSL uses "short circuiting" for && and ||. That means, if the expression x in the expression "x&&y" evaluates to false, than the whole expression evaluates to false without evaluating y. The same is true for x evaluating to true in the expression "x||y".</p>
+
+<p>This can be used to test something for null (or something else) and only evaluate the second part if the variable is not null:
+Example:
+<div class="docuCode"><span class="docuCodeOp">(</span>b <span class="docuCodeOp">!</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span> <span class="docuCodeOp">&</span><span class="docuCodeOp">&</span> a <span class="docuCodeOp">!</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span> <span class="docuCodeOp">&</span><span class="docuCodeOp">&</span> b &lt; a<span class="docuCodeOp">)</span></div>
+b &lt; a is undefined and will throw an error if b or a are null. However due to the short circuit, b &lt; a will not be evaluated if b or a are null.</p><div class="docuSubCapt"><a name="9">3.9 The Value null</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>In gsl each variable can be set to null which means something like "no value at all". Structs, objects and arrays are set to null by default.</p>
+
+<p>Be careful when using null with bool,float and int variables. The operators that normally operate on these types like +,-,*,||,&& do not work on null values and will throw an error when used on null values.</p>
+
+<p>An array entry is also considered null if it doesn't exist yet. But be careful! If a[0] evaluates to null, then there can be two cases:
+a) the entry doesn't exist.
+b) the entry exists but null was assigned to it.</p>
+
+<p>The difference is that, when iterating over an array the b) cases will be iterated!
+So if you want to erase an entry from an array don't set it to null, it won't be erased! Rather use the unset() operator (see next chapter).</p><div class="docuSubCapt"><a name="10">3.10 The unset() Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The unset(VARNAME) operator unsets the variable named &lt;VARNAME&gt;. If var name is a local or global variable it will be removed. If the var is used afterwards, you will receive an error, that it cannot be resolved, since it doesn't exist anymore. </p>
+
+<p>If unset is used on an array entry (example: unset(a[0]);), then this entry is removed from the array.</p>
+
+<p>Note that the unset operator returns the value of the variable it has just unset.</p>
+
+<p>It is possible to use unset on struct members which will remove the member from this struct. However this is highly discouraged as it may result in undefined behaviour!</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeType">int</span> a <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a <span class="docuCodeOp">=</span> 3<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Error, a can no longer be resolved, it doesn't exist anymore</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bla"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//false, a[0] is NOT null</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//true, a[0] doesn't exist anymore, so it equals null</span></div></p><div class="docuSubCapt"><a name="11">3.11 The instanceof Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Syntax:
+<div class="docuCode">EXPRESSION <span class="docuCodeKeyword">instanceof</span> TYPENAME</div>
+The instanceof operator evaluates the expression &lt;EXPRESSION&gt;. Then,it returns true if the value of the expression is of type &lt;TYPENAME&gt; or derived from it. If it ain't, then it returns false.</p>
+
+<p>It can be used to check if a struct is of a specified derived type, or if a var is of a given type.</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeType">var</span> a <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>
+<span class="docuCodeType">bool</span> b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>a <span class="docuCodeKeyword">instanceof</span> <span class="docuCodeType">int</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span><span class="docuCodeComment">//true, since 5 is an instance of integer</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeKeyword">typedef</span> Size <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> width<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> height<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeType">struct</span> s <span class="docuCodeOp">=</span> Size<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">bool</span> b<span class="docuCodeOp">;</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>s <span class="docuCodeKeyword">instanceof</span> <span class="docuCodeType">struct</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//True, since Size is derived from struct</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>s <span class="docuCodeKeyword">instanceof</span> Size<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//True, since s contains an instance of Size</span>
+b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>s <span class="docuCodeKeyword">instanceof</span> Point2D<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//False, Size is not derived from Point2D</span></div></p><div class="docuSubCapt"><a name="12">3.12 The Explicit Typecast Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>In GSL explicit typecasts to type &lt;T&gt; are done by prefixing the expression that should be casted with (T).</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"23"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">int</span><span class="docuCodeOp">)</span>s<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Explicit cast to int</span></div></p>
+
+<p>For more information see <a href="c2.html#9">Typecasting</a>.</p><div class="docuSubCapt"><a name="13">3.13 The Script Output Operator $</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The $ operator is a prefix operator that converts its argument to string, appends it to an internal buffer and also returns it. This internal buffer is read and flushed by some system calls to do stuff like the macro replacement.</p>
+
+<p><div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 15<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> j <span class="docuCodeOp">=</span> <span class="docuCodeOp">$</span>i<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//"15" is appended to the internal buffer and 15 is assigned to j</span></div></p><div class="docuSubCapt"><a name="14">3.14 The Conditional Expression Operators ?:</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>A conditional expression, is a construction of three expressions seperated by ? and :. If the first expression's value is true, then the second expressions value is used as value for the whole expression. If not, then the third expression's value is used.
+The syntax is like this:
+<div class="docuCode">CONDITION<span class="docuCodeOp">?</span>THENEXPRESSION<span class="docuCodeOp">:</span>ELSEEXPRESSION</div>
+&lt;CONDITION&gt; is an expression that must evaluate to a boolean value. If the value is true, then the value of the whole expression is the value of &lt;THENEXPRESSION&gt;. If the value of &lt;CONDITION&gt; is false, then the value of the whole Expression is the value of &lt;ELSEEXPRESSION&gt;</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>3&lt;5<span class="docuCodeOp">?</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">:</span><span class="docuCodeString">"bar"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//since 3&lt;5 is true, s is now "foo"</span>
+<span class="docuCodeType">string</span> s2 <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>s<span class="docuCodeOp">!</span><span class="docuCodeOp">=</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">?</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">:</span><span class="docuCodeString">"bar"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//since s!="foo" is false, s2 is now "bar"</span></div></p>
+
+<p>Masking null with the empty string:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span> 				<span class="docuCodeComment">// s may be null;</span>
+<span class="docuCodeType">string</span> s2 <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>s<span class="docuCodeOp">=</span><span class="docuCodeOp">=</span><span class="docuCodeKeyword">null</span><span class="docuCodeOp">?</span><span class="docuCodeString">""</span><span class="docuCodeOp">:</span>s<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//if s was null then s2 is "", else s2 is s</span></div></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c4.html">NEXT CHAPTER</a>
+	 | <a href="c2.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

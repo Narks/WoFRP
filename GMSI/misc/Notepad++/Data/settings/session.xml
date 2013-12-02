@@ -1,0 +1,10 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="2">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="2232" startPos="0" endPos="0" selMode="0" lang="C#" filename="F:\war3dev\GMSI\script\autoexec\wc3MapDefinitions.gsl" />
+            <File firstVisibleLine="106" xOffset="0" scrollWidth="904" startPos="3030" endPos="3030" selMode="0" lang="C#" filename="F:\war3dev\GMSI\script\lib\common.gsl" />
+            <File firstVisibleLine="15" xOffset="0" scrollWidth="408" startPos="1124" endPos="1124" selMode="0" lang="C#" filename="F:\war3dev\GMSI\script\BLRP_SetUpUnits.gsl" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>

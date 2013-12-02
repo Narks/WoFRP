@@ -1,0 +1,28 @@
+/**
+*	Takes a screenshot after <param1> seconds. Then, a clipbox will show where you can clip that screenshot and then
+*	saves it somewhere as a PNG image. This script was especially designed for beeing called from JNGP.
+*
+*	If no parameter is handed to the script, it waits 3 seconds before screenshotting.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2009
+*	@param Number of milliseconds to wait before the screenshot is taken.
+*/
+include("image.gsl");
+include("string.gsl");
+include("dialog.gsl");
+typedef Image extern;
+int time = (int)@args[0];
+if(time == null) time = 3000; 
+sleep(time);
+
+Image i = showClipbox(takeScreenshot());
+string file = fileDialog(".","Save as PNG...",".png");
+if(file==null) fail("You haven't specified a file name!");
+if(toLowerCase(substr(file,strlen(file)-4))!= ".png") file = file + ".png";
+saveImagePNG(i,file);
+echoln("Saved screenshot successfully as " + file);
+confirmDialog("Done!","Saved screenshot successfully as " + file,BUTTONS_OK);

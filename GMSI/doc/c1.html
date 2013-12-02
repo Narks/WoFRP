@@ -1,0 +1,80 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c2.html">NEXT CHAPTER</a>
+</div>
+<p><div class="docuCapt">1. General Syntax</div></p><div class="docuSubCapt"><a name="1">1.1 File, Text and Letter Format</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>GSL Source Files need to have the extension .gsl. The encoding should be UTF-8 or ISO-Latin-1. A Source File is executed from top to bottom.</p>
+
+<p>GSL is case sensitive, all keywords are written in lower case letters only. So, "if" is not equals to "If" or "IF".</p>
+
+<p>GSL doesn't use whitespaces, tabs or newlines for parsing. So, you can format your script as you wish. The following
+three code snippets are semantically equivalent:</p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>a&gt;b<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>i<span class="docuCodeOp">=</span>4<span class="docuCodeOp">;</span><span class="docuCodeOp">}</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>a &gt; b<span class="docuCodeOp">)</span>
+<span class="docuCodeOp">{</span>
+	i <span class="docuCodeOp">=</span> 4<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">if</span>
+<span class="docuCodeOp">(</span>      a
+ &gt; b
+ <span class="docuCodeOp">)</span>
+<span class="docuCodeOp">{</span>i 
+ </p>
+
+<p><span class="docuCodeOp">=</span>  			4
+<span class="docuCodeOp">;</span><span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="2">1.2 Statement Blocks</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Statements which are surrounded by curly braces are considered a statement block. Nonglobal variables defined inside such a block are not visible outside of it.</p>
+
+<p><div class="docuCode"><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+i <span class="docuCodeOp">=</span> 6<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//error</span></div>
+The line "i = 6;" will throw an error, because i is defined inside a block and is not visible after leaving the block. </p>
+
+<p><b>A statement block itself is again a statement. So you can use a statement block everywhere, where you could also use a single statement.</b>
+A prominent example is the if (or any other control structure):</p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>a &gt; b<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	statement1<span class="docuCodeOp">;</span>
+	statement2<span class="docuCodeOp">;</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="3">1.3 Comments</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Comments are parts of text which are ignored by the compiler. There are two sorts of comments in GSL.
+Line comments, which end at the end of the line. These start with //
+Block comments, which start with /* and end with */. They can include many lines.</p>
+
+<p>Here is an example for both types</p>
+
+<p><div class="docuCode"><span class="docuCodeComment">//This comment ends at the end of the line</span>
+<span class="docuCodeOp">/</span><span class="docuCodeOp">*</span>
+This
+comment
+can
+range
+over
+several
+lines <span class="docuCodeOp">*</span><span class="docuCodeOp">/</span></div></p><div class="docuSubCapt"><a name="4">1.4 Keywords</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>These words are part of the language gsl and may not be used as identifiers (var names, function names, type names).</p>
+
+<p>Basic keywords:</p>
+
+<p><b><ul class="docList"><li>break</li><li>catch</li><li>continue</li><li>else</li><li>extends</li><li>extern</li><li>for</li><li>global</li><li>if</li><li>instanceof</li><li>namespace</li><li>new</li><li>null</li><li>return</li><li>this</li><li>trap</li><li>try</li><li>typedef</li><li>type</li><li>typetostr</li><li>strtotype</li><li>unset</li><li>while</li></ul></b></p>
+
+<p>The boolean literals:</p>
+
+<p><b><ul class="docList"><li>true</li><li>false</li></ul></b></p>
+
+<p>The type names (case insensitiv for the first letter):</p>
+
+<p><b><ul class="docList"><li>array Array</li><li>bool Bool</li><li>container Container</li><li>float Float</li><li>int Int</li><li>object Object</li><li>string String</li><li>struct Struct</li><li>var Var</li><li>void Void</li></ul></b></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c2.html">NEXT CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

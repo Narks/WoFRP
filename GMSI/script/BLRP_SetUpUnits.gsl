@@ -1,0 +1,54 @@
+// This scirpt should set up all the units.
+void DoStuff()
+{
+	for (string s: map.objects)
+	{
+		Wc3obj myObject = map.objects[s];
+		if (myObject instanceof Unit)
+		{
+			echoln(myObject.Name);
+			
+			myObject.fused = 0;
+			myObject.bountyplus = 0;
+			myObject.bountydice = 0;
+			myObject.bountysides = 0;
+			myObject.goldcost = 0;
+			myObject.lumbercost = 0;
+			myObject.stockMax = 1;
+			myObject.stockRegen = 0;
+			myObject.stockStart = 0;
+			myObject.bldtm = 1;
+			
+			// repair costs
+			myObject.goldRep = 0;
+			myObject.lumberRep = 0;
+			
+			// point costs
+			myObject.points = 0;
+			
+			// lumber bounties
+			myObject.lumberbountyplus = 0;
+			myObject.lumberbountydice = 0;
+			myObject.lumberbountysides = 0;
+			
+			// try to remove tech requirements
+			myObject.Requires = "";
+			myObject.Requiresamount = "";
+			myObject.Requires1 = "";
+			myObject.Requires2 = "";
+			myObject.Requires3 = "";
+			myObject.Requires4 = "";
+			myObject.Requires5 = "";
+			myObject.Requirescount = 0;
+			
+			// placement requirements
+			myObject.preventPlace = "";
+			myObject.requirePlace = "";
+			
+			
+			// remove ubersplats
+			myObject.uberSplat = "";
+		}
+	}
+}
+

@@ -1,0 +1,93 @@
+/** 	
+*	This file includes useful functions
+*	for convenient use of comma separated lists
+*
+*	Try to avoid using big comma separated lists, their performance sux, since most operations are of linear or even quadratic complexity.
+*	I just wrote this library because blizzard uses comma separated lists to seperate its objects in object editor fields like the abilitiy list
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2008
+*	@type Library
+*/
+
+{
+	//Adds an entry to a comma separated list
+	string listInsert(string list, string toAdd){
+		if(toAdd=="") return list;
+		if(list=="") return toAdd;
+		return list + "," + toAdd;
+	}
+	
+	//Gets you the entry with index "index"
+	string listGetEntry(string list, int index){
+		for(string s:list){
+			if(index==0){
+				return s;
+			}
+			index--;
+		}
+		return "";
+	}
+	
+	//Removes an entry from a list (if the list contained it)
+	string listRemove(string list,string toRemove){
+		string result;
+		for(string s:list){
+			if(s!=toRemove)
+				result = listInsert(result,s);
+		}
+		return result;
+	}
+	
+	//Adds an entry to a comma separated list at a given position
+	string listInsert(string list, string toAdd, int index){
+		if(toAdd=="") return list;
+		if(list=="") return toAdd;
+		int length = listSize(list);
+		if (index>=length) return listInsert(list,toAdd);
+		if (index<=0) return toAdd + "," + list;
+		
+		int i = 0;
+		string out = "";
+		for(string iter: list){
+			out = listInsert(out,iter);
+			i++;
+			if(i==index) out = listInsert(out,toAdd);
+		}
+		
+		return out;
+	}
+	
+	//Counts the number of entries in a comma separated list
+	int listSize(string list){
+		int num = 0;
+		for(string s: list){
+			num++;
+		}
+		return num;	
+	}
+	
+	//Returns true if the comma list "list" contains an entry "searchFor"
+	bool listContains(string searchFor, string list){
+
+		for(string iter: list){
+			if(searchFor==iter) return true;
+		}		
+		return false;
+		
+	}
+	
+	//Returns the string keys of an array as a comma separated list
+	string keysToList(array a){
+		string out="";
+		for(string iter: a){
+			out = listInsert(out,iter);
+		}
+		return out;
+	}
+	
+	
+}

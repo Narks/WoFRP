@@ -1,0 +1,47 @@
+/**
+*	An example that finds all JASS functions in a desired map and outputs them to the console.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2009
+*	@param A map to be applied on
+*/
+
+
+include("functions.gsl");
+include("dialog.gsl");
+typedef Function extern;	//We have to declare the struct type Function as extern since it is declared in an included file in the same parsing run
+
+//Fetch the map to be applied on, either from the command line arguments or from a dialog
+string mapFile = (@args[0] == null?fileDialog("Choose a map",@inputPath,".w3x"):@args[0]); 
+
+//Does the user also want to see the function bodies?
+bool showBodies;
+if(@args[0]==null){
+	showBodies = confirmDialog("Show function bodies?","Do you also want to display the function bodies?",BUTTONS_YES_NO);
+} else {
+	showBodies = (@args[1]!=null&&@args=="show");
+}
+
+//Load the map
+Map map = loadMap(mapFile,false,true);
+
+//Find all functions and store them in the array <functions>
+array<Function> functions = findFunctions(map);
+
+//Output their information
+for(int i:functions){
+	Function f = functions[i];
+	echoln("Function: " + f.name);
+	echoln("Defined in: " + (f.containingTrigger==null?"Map header":"Trigger " + f.containingTrigger.name));
+	echoln("Return Type: " + f.returnType);
+	echoln("Signature: " + f.signature);
+	//display bodies only if desired
+	if(showBodies) echoln("Body:\n" + f.body);
+	echoln("");
+}
+
+//Output overall count
+echo("Result: " + size(functions) + " functions found!");

@@ -1,0 +1,77 @@
+/**
+*	This library contains functions to display "dialoges", i.e. small windows that ask the user for input.
+*
+*	If you want for example the user to be able to enter a map on which your script should be applied
+*	you can use the fileDialog(...) function to display a file choose dialog to the user.
+*
+*	Following dialoges exist:
+*	- File choose dialog: allows the user to select a file
+*	- Input dialog: allows the user to enter a string
+*	- Confirm dialog: A simple dialog with some buttons like "Yes/No", "Okay/Cancel" or only "Okay"
+*	-Option dialog: Lets the user choose an entry from a list of possible strings
+*	
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.1
+*	@date 2008
+*	@type Library
+*/
+
+/**
+*	Displays a file choose dialog to the user, titled <title>.
+*	It starts at the folder <startFolder>.
+*	<allowedExtensions> is a string containg all allowed suffixes separated with commas.
+*	Only files that end with one of these suffixes may be chosen.
+*	Example "w3x,w3m" would only allow files that end with either w3x or w3m.
+*	If <allowedExtension> is null, then all files are allowed
+*
+*	The function returns the absolute path of the chosen file.
+*	If cancel or close window is pressed, then the function returns null
+*/
+native string fileDialog(string title,string startFolder,string allowedExtensions);
+
+/**
+*	Displays a confirm dialog titled <title> with a explanatory text <text>.
+*	Below the text there can be buttons according to <buttons>.
+*	Possible values:
+*	BUTTONS_OK: Only an okay button is displayed
+*	BUTTONS_OK_CANCEL: An okay and a cancel button are displayed
+*	BUTTONS_YES_NO: A Yes and a No button are displayed
+*
+*	The function returns true if Okay or Yes is pressed, and false otherwise
+*/
+global int BUTTONS_OK = 0;
+global int BUTTONS_OK_CANCEL = 1;
+global int BUTTONS_YES_NO = 2;
+native bool confirmDialog(string title, string text, int buttons);
+
+/**
+*	Displays an input dialog requesting the user to enter a string.
+*	The dialog is titled <title> with an explanatory text <text>.
+*	<defaultValue> can be used to insert a default string into the input area
+*
+*	the function returns the user's input or null if the user pressed cancel or close window
+*/
+native string inputDialog(string title, string text, string defaultValue);
+
+/**
+*	Same as above but with no defaultValue
+*/
+native string inputDialog(string title, string text);
+
+
+/**
+*	Displays an option dialog requesting the user to choose one entry from a list of strings.
+*	The dialog is titled <title> with an explanatory text <text>.
+*	DefaultValue is the value that is preselected in the list
+*	
+*	the function returns the users choice or null if he pressed cancel or close window
+*/
+native string optionDialog(string title, string text, array<string> options, string defaultValue);
+
+/**
+*	Same as above but without default Value
+*/
+native string optionDialog(string title, string text, array<string> options);

@@ -1,0 +1,155 @@
+include("objects.gsl");
+include("triggers.gsl");
+
+void DoStuff()
+{
+UnitToHero("hfoo", "INTHERO", "INT", 18, 18, 23, 1.80, 1.80, 2.60);
+UnitToHero("hfoo", "AGIHERO", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "STRHERO", "STR", 23, 18, 18, 2.60, 1.60, 1.60);
+
+UnitToHero("hfoo", "Assassin", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Demon Hunter", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Phoenix Guard", "STR", 23, 18, 18, 2.60, 1.60, 1.60);
+UnitToHero("hfoo", "Burning One", "STR", 23, 18, 18, 2.60, 1.60, 1.60);
+UnitToHero("hfoo", "Arch Cleric", "INT", 18, 18, 23, 1.80, 1.80, 2.60);
+UnitToHero("hfoo", "Swordsman", "STR", 23, 18, 18, 2.60, 1.60, 1.60);
+UnitToHero("hfoo", "Ghoul Lord", "INT", 18, 18, 23, 1.80, 1.80, 2.60);
+UnitToHero("hfoo", "Arcane Ranger", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Elven Ranger", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Horse Cart", "STR", 12, 10, 8, 1.00, 0.80, 0.60);
+UnitToHero("hfoo", "Slayer", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Weapons Master", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Panther", "AGI", 18, 23, 18, 1.80, 2.60, 1.80);
+UnitToHero("hfoo", "Bob", "INT", 18, 17, 18, 1.80, 1.70, 1.80);
+}
+
+void AddProjectile(string aName, string aDesc, string aProjectilePath, int aProjectileSpeed)
+{
+	String lNewAbilityId = getFreeId(map, "P000");
+	Wc3obj lNewAbility = createObject(map, "Alit", lNewAbilityId, false);	
+
+	lNewAbility.Name = "!pr";
+	lNewAbility.EditorSuffix = "Projectile: " + aName;
+
+	lNewAbility.TargetArt = "";
+	lNewAbility.Missileart = aProjectilePath;
+	lNewAbility.Missilespeed = aProjectileSpeed;
+
+	Trigger lOutput = getTriggerByName(map, "gmsioutput");
+	lOutput.code += "\nAdd(\"" + aName + "\", \"" + aDesc + "\", '" + lNewAbilityId + "');";
+}
+
+
+
+
+
+void UnitToHero(string aUnitBase, string aName, string aPrimaryStat, 
+int aStr, int aAgi, int aInt, float aStrPlus, float aAgiPlus, float aIntPlus)
+{
+	String lNewUnitId = getFreeId(map, "O000");
+	Wc3obj lNewUnit = createObject(map, "Hpal", lNewUnitId, false);
+	Wc3obj lBaseUnit = map.objects[aUnitBase];	
+
+	// Set campaign flag, so the hero's name is what we see in the editor
+	lNewUnit.campaign = 1;
+	lNewUnit.Propernames = aName;
+	lNewUnit.Name = lBaseUnit.Name + " (Hero)";
+
+	lNewUnit.blend = lBaseUnit.blend;
+	lNewUnit.castbsw = lBaseUnit.castbsw;
+	lNewUnit.castpt = lBaseUnit.castpt;
+	lNewUnit.run = lBaseUnit.run;
+	lNewUnit.walk = lBaseUnit.walk;
+	lNewUnit.occH = lBaseUnit.occH;
+	lNewUnit.maxPitch = lBaseUnit.maxPitch;
+	lNewUnit.maxRoll = lBaseUnit.maxRoll;
+	lNewUnit.file = lBaseUnit.file;
+	lNewUnit.impactSwimZ = lBaseUnit.impactSwimZ;
+	lNewUnit.impactZ = lBaseUnit.impactZ;
+	lNewUnit.launchX = lBaseUnit.launchX;
+	lNewUnit.launchY = lBaseUnit.launchY;
+	lNewUnit.launchSwimZ = lBaseUnit.launchSwimZ;
+	lNewUnit.launchZ = lBaseUnit.launchZ;
+	lNewUnit.animProps = lBaseUnit.animProps;
+	lNewUnit.Attachmentanimprops = lBaseUnit.Attachmentanimprops;
+	lNewUnit.Attachmentlinkprops = lBaseUnit.Attachmentlinkprops;
+	lNewUnit.scale = lBaseUnit.scale;
+	lNewUnit.unitShadow = lBaseUnit.unitShadow;
+	lNewUnit.shadowX = lBaseUnit.shadowX;
+	lNewUnit.shadowY = lBaseUnit.shadowY;
+	lNewUnit.shadowH = lBaseUnit.shadowH;
+	lNewUnit.shadowW = lBaseUnit.shadowW;
+	lNewUnit.Specialart = lBaseUnit.Specialart;
+	lNewUnit.collision = lBaseUnit.collision;
+
+	lNewUnit.backSw1 = lBaseUnit.backSw1;
+	lNewUnit.dmgpt1 = lBaseUnit.dmgpt1;
+	lNewUnit.backSw2 = lBaseUnit.backSw1;
+	lNewUnit.dmgpt2 = lBaseUnit.dmgpt1;
+	lNewUnit.weapType1 = lBaseUnit.weapType1;
+
+	lNewUnit.acquire = 700;
+	lNewUnit.rangeN2 = 700;
+	
+	lNewUnit.unitSound = lBaseUnit.unitSound;
+	lNewUnit.RandomSoundLabel = lBaseUnit.RandomSoundLabel;
+	lNewUnit.MovementSoundLabel = lBaseUnit.MovementSoundLabel;
+	
+	
+	lNewUnit.fused = 0;
+	lNewUnit.bldtm = 1;
+	lNewUnit.bountyplus = 0;
+	lNewUnit.bountydice = 0;
+	lNewUnit.bountysides = 0;
+	lNewUnit.goldcost = 0;
+	
+	lNewUnit.lumbercost = 0;
+	lNewUnit.points = 0;
+	lNewUnit.goldRep = 0;
+	lNewUnit.lumberRep = 0;
+	lNewUnit.stockMax = 1;
+	lNewUnit.stockRegen = 0;
+	lNewUnit.stockStart = 0;
+	lNewUnit.Tip = "Summon Hero";
+	lNewUnit.Ubertip = "Custom hero";
+	lNewUnit.nameCount = 1;
+	lNewUnit.Requirescount = 0;
+	lNewUnit.Requires1 = "";
+	lNewUnit.Requires2 = "";
+
+	lNewUnit.heroAbilList = "";
+	lNewUnit.death = lBaseUnit.death;
+	lNewUnit.elevPts = lBaseUnit.elevPts;
+	lNewUnit.elevRad = lBaseUnit.elevRad;
+	lNewUnit.fogRad = lBaseUnit.fogRad;
+	lNewUnit.shadowOnWater = lBaseUnit.shadowOnWater;
+
+	lNewUnit.Art = lBaseUnit.Art;
+	lNewUnit.orientInterp = lBaseUnit.orientInterp;
+	lNewUnit.propWin = lBaseUnit.propWin;
+	lNewUnit.Boneprops = lBaseUnit.Boneprops;
+	lNewUnit.selZ = lBaseUnit.selZ;
+	lNewUnit.selCircOnWater = lBaseUnit.selCircOnWater;	
+
+	lNewUnit.Awakentip = "Revive Hero";
+	lNewUnit.Hotkey = "";
+	lNewUnit.Revivetip = "Revive Hero";
+
+	lNewUnit.movetp = lBaseUnit.movetp;
+	lNewUnit.collision = lBaseUnit.collision;
+	lNewUnit.spd = lBaseUnit.spd;
+	lNewUnit.moveHeight = lBaseUnit.moveHeight;
+	lNewUnit.moveFloor = lBaseUnit.moveFloor;
+	lNewUnit.maxSpd = lBaseUnit.maxSpd;
+	lNewUnit.spd = lBaseUnit.spd;
+
+	lNewUnit.STR = aStr;
+	lNewUnit.AGI = aAgi;
+	lNewUnit.INT = aInt;
+	lNewUnit.STRplus = aStrPlus;
+	lNewUnit.AGIplus = aAgiPlus;
+	lNewUnit.INTplus = aIntPlus;
+
+	Trigger lOutput = getTriggerByName(map, "gmsioutput");
+	lOutput.code += "\nAdd(\"custom_" + lNewUnitId + " (" + aName + " [hero])\");";
+}

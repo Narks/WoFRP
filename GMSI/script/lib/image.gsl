@@ -1,0 +1,74 @@
+
+typedef Image extends object;
+
+/**
+* Loads an image from a <file>
+* At the moment only jpg, png and blp are supported.
+*/
+native Image loadImage(string file);
+
+/**
+*	Get, set image parameters
+*/
+native int getImageWidth(Image image);
+native int getImageHeight(Image image);
+native int getPixelRGBA(Image image,int x, int y);
+native int getPixelR(Image image,int x, int y);
+native int getPixelG(Image image,int x, int y);
+native int getPixelB(Image image,int x, int y);
+native int getPixelA(Image image,int x, int y);
+native int setPixelRGBA(Image image,int x, int y, int r, int g, int b, int a);
+
+/**
+*	Resizes the image <image> to <width>,<height> pixels using the interpolation
+*	Techinque <interpolationTechinque> which can be either nearest neighbor,
+*	bilinear or bicubic.
+*	For bilinear an optimized multistep techinque is used for downscaling
+*/
+global int INTERPOLATE_NEAREST_NEIGHBOR = 0;
+global int INTERPOLATE_BILINEAR = 1;
+global int INTERPOLATE_BICUBIC = 2;
+native Image rescaleImage(Image image, int width, int height, int interpolationTechinque);
+
+/**
+*	Resizes an image <image> to the size <width>,<height> using bilinear interpolation
+*/
+Image rescaleImage(Image image, int width, int height){
+	return rescaleImage(image,width,height,INTERPOLATE_BILINEAR);
+}
+
+/**
+*	Resizes an image <image> using <ratio>
+*/
+Image rescaleImage(Image image, float ratio){
+	return rescaleImage(image,(int)(getImageWidth(image)*ratio),(int)(getImageHeight(image)*ratio),INTERPOLATE_BILINEAR);
+}
+
+/**
+*	Returns a subimage which contains a portion of <image>
+*	starting at <x,y> (Upper left corner) with <width> and <height> pixels
+*/
+native Image getSubImage(Image image, int x, int y, int width, int height);
+
+/**
+*	Saves an image using the TGA Format
+*/
+native void saveImageTGA(Image image, string file);
+/**
+*	Saves an image using the PNG Format
+*/
+native void saveImagePNG(Image image, string file);
+
+/**
+*	Takes a screenshot and returns it as an image
+*/
+native Image takeScreenshot();
+
+/**
+*	Shows a gui box where the user can clip an image. Returns the clipped image when the user presses okay or null if the user closes the window or presses cancel
+*	<caption> is a string that will be on top of the clip box explaining what should be clipped. If this parameter is null then a standard caption will be used
+*/
+native Image showClipbox(Image toClip, string caption);
+Image showClipbox(Image toClip){
+	return showClipbox(toClip,null);
+}

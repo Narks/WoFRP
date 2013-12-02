@@ -1,0 +1,130 @@
+/**
+*	This file contains functions and system calls for the automatic pattern matching and replacement system.
+*
+*	The main object for such purposes is the type Matcher. This is an object that can first store macros
+*	and then be applied to a string replacing all macros with their desired output.
+*
+*	Read the function documentation for more information.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*
+*/
+
+typedef Matcher extends object;	//A pattern matcher and replacer
+
+//Retrieves a new matcher
+native Matcher getNewMatcher();
+
+/**
+*	Adds a replacement to matcher m.
+*	The matcher will, upon application, search for <searchFor> and replace it with <replaceWith>
+*/
+native void addReplacement(Matcher m, string searchFor, string replaceWith);
+
+/**
+*	Just like add replacement, with the difference that replace with will be treated as gsl script
+*	and executed. Then, the script out put will be the replacement for <searchFor>
+*	(You can add to the script replacement using the $ operator)
+*/
+native void addMacro(Matcher m, string searchFor, string replaceWith);
+
+/**
+*	This function will format a float input to a string by rounding it to 'numDecimals' decimals
+*	If 'appendZeros' is true, the output will always have excatly 'numDecimals' decimals,
+*	if not, then tail zeros will be omitted 
+*/
+native string formatFloat(float input, int numDecimals, bool appendZeros);
+
+string formatFloat(float input, int numDecimals){
+	return formatFloat(input,numDecimals,false);
+}
+string formatFloat(float input){
+	return formatFloat(input,2,false);
+}
+string formatPerc(float input){
+	return formatFloat(input*100) + "%";
+}
+string formatPerc(int input){
+	return formatFloat((float)input*100) + "%";
+}
+string format(float input){
+	return formatFloat(input);
+}
+string format(int input){
+	return "" + input;
+}
+string format(string input){
+	return input;
+}
+
+/**
+*	This function creates a basic matcher with some useful predefined replacements
+*
+*/
+Matcher getBasicMatcher(){
+	include("utilities.gsl");
+	Matcher m = getNewMatcher();
+	addMacro(m,"\\#(\\w+)\\#","$format($1);");			//A single word a in #a# is treated as an identifier which has to be formated and then displayed
+	addMacro(m,"#(\\w+)\\.(\\w+)#","$format($1.$2);");	//Two words a,b in #a.b# seperated with a point are treated as a struct name which has to be formated and then displayed
+	addMacro(m,"\\#(\\w+)\\%\\#","$formatPerc($1);");		//Same as above, if a % is at the end the stuff should be percent formatted
+	addMacro(m,"\\#(\\w+)\\.(\\w+)\\%\\#","$formatPerc($1.$2);"); //Same with % and a.b
+	addMacro(m,"\\/\\/\\#(.+?)\\#","$1");					//Everything else in //#a# (for triggers) is just treated as gsl code and executed
+	addMacro(m,"\\#(.+?)\\#","$1");					//Everything in #a# (for non triggers) is also treated as gsl and executed
+	return m;
+}
+
+/**
+*	Applies matcher <m> onto the string <applyTo> and returns the result
+*/
+native string applyMatcher(Matcher m, string applyTo);
+
+/**
+*	Applies the matcher <m> recursive to <a>.
+*	That means, if a is a variable that contains other variables (an array or a struct)
+*	Then applyRecursive will also be applied onto every member of a.
+*	Matching entries are replaced automatically.
+*	This method returns the number of strings it has checked with the matcher
+*
+*	Note that this function opens a namespace for each container variable it finds,
+*/
+int applyRecursive(Matcher m, var a){
+	int numChecked = 0;
+	
+	if(a instanceof array){
+		namespace a{
+			for(int i: a){
+				if(a[i] instanceof string){
+					a[i] = applyMatcher(m,a[i]);
+					numChecked++;
+				}else if((a[i] instanceof array)||(a[i] instanceof struct)){
+					numChecked += applyRecursive(m,a[i]);
+				}
+			}
+			for(string i: a){
+				if(a[i] instanceof string){
+					a[i] = applyMatcher(m,a[i]);
+					numChecked++;
+				}else if((a[i] instanceof array)||(a[i] instanceof struct)){
+					numChecked += applyRecursive(m,a[i]);
+				}
+			}
+		}
+	} else if(a instanceof struct){
+		namespace a{
+			for(string i: a){
+				if(a[i] instanceof string){
+					a[i] = applyMatcher(m,a[i]);
+					numChecked++;
+				}else if((a[i] instanceof array)||(a[i] instanceof struct)){
+					numChecked += applyRecursive(m,a[i]);
+				}
+			}
+		}
+	}
+	return numChecked;
+}

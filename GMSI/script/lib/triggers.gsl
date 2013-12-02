@@ -1,0 +1,30 @@
+
+
+/**
+*	Contains useful functions for handling triggers
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.1
+*	@date 2008
+*	@type Library
+*
+*/
+
+array<Trigger> getTriggersInCategory(Map map, String categoryName){
+	fail("TODO: write this function...");
+}
+
+/**
+*	Returns the trigger named <name> in the map <map> or null if no trigger with that name exists
+*/
+Trigger getTriggerByName(Map map, String name){
+
+	array a = map.script.triggers;
+	for(int i: a){
+		if(a[i].name == name) return a[i];
+	}
+	
+	return null;
+}

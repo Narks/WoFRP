@@ -1,0 +1,329 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c8.html">NEXT CHAPTER</a>
+	 | <a href="c6.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">7. Advanced Concepts</div></p>
+
+<p>This chapter includes advanced concepts in GSL which were left out from the former chapters to not confuse new users. You can write mighty scripts without using these concepts, they don't add aditional functionality, but add some more type safety, reduce coding effort and beautify your code.</p><div class="docuSubCapt"><a name="1">7.1 Extending Structs</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>As you might know, all structs in GSL are extended from the struct type "struct" which contains no members at all. However, you can also extend a struct from other ones(like inheritance in object oriented languages).
+A struct contains all members of all structs it is extended from, plus the ones that are declared in its own definition.
+An extended struct can be used everwhere, where one of its parents can be used ([ref=typecast]implicit upcast[]).</p>
+
+<p>Note that if two of the struct's parents have equally named members of the struct itself redeclares a member that is already in one of its ancestors, you will get an error, telling you which members are double and thus one of both has to removed.</p>
+
+<p>You can test if the content of a variable is derived from (or even equal to) a struct by using the <a href="c3.html#11">instanceof operator</a>.</p>
+
+<p>The syntax for deriving structs from other ones is the following:</p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">typedef</span> TYPENAME <span class="docuCodeType">struct</span> <span class="docuCodeKeyword">extends</span> PARENT1 <span class="docuCodeOp">,</span> PARENT2<span class="docuCodeOp">,</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">{</span>
+	MEMBERDEFINITIONS
+<span class="docuCodeOp">}</span></div></p>
+
+<p>The only new part is the "extends PARENT1 , PARENT2, ..." behind the word struct telling which parents this struct is derived from.</p>
+
+<p>Definition examples:</p>
+
+<p>Defining Point3D as a child of Point2D
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeKeyword">typedef</span> Point3D <span class="docuCodeType">struct</span> <span class="docuCodeKeyword">extends</span> Point2D<span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> z<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div>
+Point3D now has the members x,y,z.</p>
+
+<p>Wrong:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Machine <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> price<span class="docuCodeOp">;</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeKeyword">typedef</span> Car <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> price<span class="docuCodeOp">;</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeKeyword">typedef</span> Porsche <span class="docuCodeType">struct</span> <span class="docuCodeKeyword">extends</span> Machine<span class="docuCodeOp">,</span> Car<span class="docuCodeOp">{</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span></div>
+Will produce an error, since Porsche is extended from Machine and Car and both contain a member named "price".</p>
+
+<p>Usage examples:
+Using the above definitions of Point2D/Point3D:
+<div class="docuCode">Point2D myPoint <span class="docuCodeOp">=</span> Point3D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Possible, since Point3D is an ancestor of Point3D (implicit upcast)</span>
+ 
+<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>myPoint <span class="docuCodeKeyword">instanceof</span> Point3D<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>		<span class="docuCodeComment">//True, since this instance of Point2D is actually of type Point3D</span>
+	Point3D p <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>Point3D<span class="docuCodeOp">)</span>myPoint<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Explicit downcast</span>
+	p<span class="docuCodeOp">.</span>z <span class="docuCodeOp">=</span> 100<span class="docuCodeOp">;</span>					<span class="docuCodeComment">//Possible, since now we are using a "Point3D"</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>[subcaption ref]Extending other datatypes[/subcaption]</p>
+
+<p>In GSL you can not only extend structs, but ALL data types. However this doesn't add new functionality, it just adds some typesafety.</p>
+
+<p>Like for structs, a derived type can always be cast implicitly to its ancestors. If you derive for example something from the type int, then you can use variables of that type everywhere, where you can use a variable of type int (implicit upcasting). However, if you declare functions that take a variable of your new defined type, than you have to cast ints to that type explicitly when using them as parameter (explicit downcasting).</p>
+
+<p>The syntax from extending from an arbitrary type is the following:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> TYPENAME <span class="docuCodeKeyword">extends</span> PARENT<span class="docuCodeOp">;</span></div>
+This creates the type &lt;TYPENAME&gt; which is a child of the type &lt;PARENT&gt;.</p>
+
+<p>Example:</p>
+
+<p>We derive from int, to create a typesafe sleep function:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Milliseconds <span class="docuCodeKeyword">extends</span> <span class="docuCodeType">int</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//The definition</span>
+ 
+<span class="docuCodeType">void</span> typesafeSleep<span class="docuCodeOp">(</span>Milliseconds m<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>	<span class="docuCodeComment">//The typesafe sleep function, takes only milliseconds</span>
+	<span class="docuCodeKeyword">sleep</span><span class="docuCodeOp">(</span>m<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>						<span class="docuCodeComment">//No casting is needed here, sleep takes an int which is an ancestor of Milliseconds (implicit upcast)</span>
+<span class="docuCodeOp">}</span> 						
+ 
+Milliseconds m <span class="docuCodeOp">=</span> 1000<span class="docuCodeOp">;</span>
+typesafeSleep<span class="docuCodeOp">(</span>m<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>					<span class="docuCodeComment">//Possible, types match</span>
+ 
+<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 1000<span class="docuCodeOp">;</span>
+typesafeSleep<span class="docuCodeOp">(</span>i<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>					<span class="docuCodeComment">//ERROR: int can't be cast implicitly to Millisec</span>
+ 
+typesafeSleep<span class="docuCodeOp">(</span><span class="docuCodeOp">(</span>Millisec<span class="docuCodeOp">)</span>i<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//Possible with explicit cast (explicit downcasting)</span></div></p>
+
+<p>[subcaption ref]Using types that were defined in another file[/subcaption]</p>
+
+<p>If you want to define data types in one file and use them in another one which is executed at the same evaluation run, then you could get problems:</p>
+
+<p>If the file where they are defined is included in the file where they re used, you will get a Parse Error, even if the include statement was before the first usage.
+But why? 
+Very simple: In contrast to C/C++ where include is a preprocessor directive and is executed before any compilation, in GSL include is a normal function, which is  evaluated AFTER parsing the file. Since at parse time, types have to be well-known to the parser, it will throw an error, if you use external types like this.</p>
+
+<p>There are 4 ways to go around that problem:</p>
+
+<p>1) Define and use them in the same file. However most of the time this is dissatisfying, since you want to use types in many files or just keep the structure you want.
+2) Let the defining file include the using after the definition, not vice versa. Then, the types will be known when the using file is included. However this is still dissatisfying sometimes when many files should use one type.
+3) Include the definition file in another evaluation run. By default GSL does three evaluation runs:
+[list]
+[*]One for the basic system calls, which only executes the file essentials.gsl in the script/autoexec folder.
+[*]One for all other autoexec tasks, which executes the autoexec.gsl in the script/autoexec folder. This file is a good place to put your includes to defined data types.
+[*]The actual run for the desired script file.
+One run is done completely (i.e. parsing AND evaluation) before the next one is parsed. So if you define your data types for example in the autoexec run, they will be available in the desired script file <b>even without reincluding the file there</b>.
+4) Use the "typedef extern" syntax to declare them in the using file.</p>
+
+<p><b>The typedef extern statement:</b></p>
+
+<p>Syntax:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> TYPE1<span class="docuCodeOp">,</span>TYPE2<span class="docuCodeOp">,</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span> <span class="docuCodeKeyword">extern</span><span class="docuCodeOp">;</span></div>
+The typedef extern statement tells the parser that the declared types (TYPE1, TYPE2...) are defined somewhere else and may be used as types. Now you won't get parse errors when using this types. But don't forget to include the file where they are defined before you use them the first time, or you will get an unknown type error!</p><div class="docuSubCapt"><a name="2">7.2 Typerestricted Arrays</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Typerestricted arrays are <a href="c2.html#7">normal arrays</a> which may only contain values of some predefined types, not every type. This adds additional typesafety. An example would be a function that takes an array of ints, adds them all and returns the result. If one entry is no error, this function would fail, so we need to ensure that the taken array only contains ints. We could do this by hand by just checking every entry for "instanceof int". However GSL offers a more intuitive and simple way to do it: Typerestricted arrays.</p>
+
+<p>Syntax:
+<div class="docuCode"><span class="docuCodeType">array</span>&lt;TYPE1<span class="docuCodeOp">,</span>TYPE2<span class="docuCodeOp">,</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>&gt;</div>
+This syntax restricts the array to the Types &lt;TYPE1&gt;, &lt;TYPE2&gt; ...</p>
+
+<p>Usage of this expression:
+<ul class="docList"><li><b>In variable declarations:</b>
+If used in a variable declaration, like:
+<div class="docuCode"><span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span><span class="docuCodeOp">,</span><span class="docuCodeType">string</span>&gt; a<span class="docuCodeOp">;</span></div>
+The variable &lt;a&gt; will only be able to take values of type int or string. If you try to assign another value to a, then you will get an error.</li><li><b>In function signatures:</b>
+If used in a signature like
+<div class="docuCode"><span class="docuCodeType">void</span> myFunction<span class="docuCodeOp">(</span><span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span><span class="docuCodeOp">,</span><span class="docuCodeType">string</span>&gt; a<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span></div>
+The function will only be able to take arrays that contain only strings or ints.
+<b>IMPORTANT: That doesn't mean that such arrays have to be of type "array&lt;int,string&gt;".</b> They can be also of the normal type array, as long as they contain only int or string entries.</li><li><b>In explicit typecasts:</b>
+A typerestricted array type can be used in explicit typecasts.
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeType">array</span> b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span>&gt;<span class="docuCodeOp">)</span> a<span class="docuCodeOp">;</span></div>
+If used like this, the cast will remove all entries that do not match the given signature. But note that since we only have one instance of that array, which is handed to be, the values that are not of type int will also be removed from array &lt;a&gt; in this example, not only from &lt;b&gt;!</li><li><b>In constructors:</b>
+<b>The use of typerestricted arrays in constructors is forbidden!</b> If you do that you will get a parse error. It is no use anyway, since you assign that new instance to a variable anyway. Since it contains no values at all, the variable may have any restrictions. So even for restricted variables, just use the normal constructor. The variable itself will do the checking!
+Example:
+<div class="docuCode"><span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span><span class="docuCodeOp">,</span><span class="docuCodeType">string</span>&gt; a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//Legal, a is a restricted array, even if the normal constructor is used</span>
+ 
+<span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span><span class="docuCodeOp">,</span><span class="docuCodeType">string</span>&gt; a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span>&lt;<span class="docuCodeType">int</span><span class="docuCodeOp">,</span><span class="docuCodeType">string</span>&gt;<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Illegal, will throw a parse error!</span></div></li><li><b>In instanceof Expressions:</b>
+It is possible, but not useful. If you use a restricted type in an instanceof expression, the expression <b>WILL NOT</b> check if the given var is an array and contains only the given values. It will just check if the variable is an array, nothing more. It is planned to implement this functionality, but it is not implemented yet...</li></ul></p><div class="docuSubCapt"><a name="3">7.3 Namespaces</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>A Namespace is a useful construct in GSL, syntax fist:
+<div class="docuCode"><span class="docuCodeKeyword">namespace</span> VARNAME<span class="docuCodeOp">{</span>
+	arbitrary code
+<span class="docuCodeOp">}</span></div>
+&lt;VARNAME&gt; has to be either an array or a struct variable.
+Note that namespaces may be nested in other ones.
+The semantics is the following: 
+The GSL Nameresolver resolves variable names in the following order, if a name isn't found in one of this spaces, than the next one is checked:
+<ul class="docList"><li>The Local namespace (all local variables)</li><li>The global namespace (all global variables)</li><li>All userdefined namespaces, from the inner one to the outer one</li></ul>
+So the namespace command will make the name resolver check the given array/struct for a variable name, if it isn't found in the globals or locals.</p>
+
+<p>Examples:</p>
+
+<p>Usage for arrays:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeKeyword">namespace</span> a<span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo "bar", since the nameresolver uses the key "foo" from a.</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>Usage for structs:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+Point2D p <span class="docuCodeOp">=</span> Point2D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+p<span class="docuCodeOp">.</span>x <span class="docuCodeOp">=</span> 15<span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeKeyword">namespace</span> p<span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>x <span class="docuCodeOp">+</span> <span class="docuCodeString">""</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo 16, since the nameresolver uses the member "x" from p.</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>Nested namespaces:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar in <span class="docuCodeType">array</span> a"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"foo2"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar2 in <span class="docuCodeType">array</span> a"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">array</span> b <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+b<span class="docuCodeOp">[</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar in <span class="docuCodeType">array</span> b"</span><span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeKeyword">namespace</span> a<span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">namespace</span> b<span class="docuCodeOp">{</span>
+		<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo "bar in array b", since the nameresolver will look in b before a, since it is the innermost namespace</span>
+		<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo2<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo "bar2 in array a", since the nameresolver cannot find the key "foo2" in a, so it checks b for it</span>
+		
+		<span class="docuCodeType">string</span> foo <span class="docuCodeOp">=</span> <span class="docuCodeString">"local bar"</span><span class="docuCodeOp">;</span>
+		<span class="docuCodeKeyword">global</span> <span class="docuCodeType">string</span> foo2 <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeKeyword">global</span> bar"</span><span class="docuCodeOp">;</span>
+		<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo "local bar", since the nameresolver checks local variables before namespaces</span>
+		<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo2<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will echo "global bar", since the nameresolver checks global variables before namespaces</span>
+ 
+	<span class="docuCodeOp">}</span>
+<span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="4">7.4 The Keyword this</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The keyword this can be used inside <a href="c7.html#3">namespaces</a>. It evaluates to the innermost namespace, i.e. to an array or struct.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeKeyword">namespace</span> a<span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">this</span><span class="docuCodeOp">.</span>foo 		<span class="docuCodeOp">=</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//sets a["foo"] to bar</span>
+	<span class="docuCodeKeyword">this</span><span class="docuCodeOp">[</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">]</span>	<span class="docuCodeOp">=</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//same as above, just using array syntax instead of struct syntax</span>
+	
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>foo<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//will echo bar</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeKeyword">this</span><span class="docuCodeOp">.</span>foo<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//the same as above</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>This is useful for assigning new variables to the namespace or checking which type the namespace is.
+If you try to use this outside a namespace you will get an error.</p><div class="docuSubCapt"><a name="5">7.5 Exiting The Script</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>If you use "return;" while beeing in no function, this will exit this evaluation run. Additional, you can just stop the execution of this evaluation run and upcoming ones by just throwing an error using <a href="c6.html#4">the fail system call</a>.
+However none of both is very ellegant, maybe a keyword for exiting the script will be introduced in upcoming versions...</p><div class="docuSubCapt"><a name="6">7.6 External Variables (@Variables)</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>In GSL there exists an own namespace for external JAVA injected variables. It is accessed by using
+<div class="docuCode"><span class="docuCodeOp">@</span>VARNAME</div>
+It contains external variables, like command line arguments. You cannot declare new variables in it, you can just read variables from it to check the command line parameters or other stuff. By default, there are four external variables:</p>
+
+<p><ul class="docList"><li><b>@args:</b> An array of command line arguments passed to this script</li><li><b>@scriptVersion:</b> The version of GSL used (string)</li><li><b>@appName:</b> The name of the application that is using GSL (string)</li><li><b>@appVersion:</b> The version of the application using GSL (string)</li></ul></p>
+
+<p>The application itself can define other external variables. GMSI for example defines, the paths which are set in the GMSI.ini as external variables:</p>
+
+<p><ul class="docList"><li><b>@outputPath:</b> A string containing the absolute path of the application's output folder</li><li><b>@inputPath:</b> A string containing the absolute path of the application's input folder</li><li><b>@exportPath:</b> A string containing the absolute path of the application's export folder</li><li>...</li></ul></p>
+
+<p>Example:
+Outputting some information:
+<div class="docuCode"><span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"GSL is used by the application <span class="docuCodeOp">\</span>"</span><span class="docuCodeString">" <span class="docuCodeOp">+</span> <span class="docuCodeOp">@</span>appName <span class="docuCodeOp">+</span> <span class="docuCodeOp">\</span>"</span><span class="docuCodeString">"<span class="docuCodeOp">,</span> version<span class="docuCodeOp">:</span> "</span> <span class="docuCodeOp">+</span> <span class="docuCodeOp">@</span>appVersion <span class="docuCodeOp">+</span> <span class="docuCodeString">"<span class="docuCodeOp">\</span>n"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"GSL version is "</span> <span class="docuCodeOp">+</span> <span class="docuCodeOp">@</span>scriptVersion <span class="docuCodeOp">+</span> <span class="docuCodeString">"<span class="docuCodeOp">\</span>n"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"Number of command line arguments passed to <span class="docuCodeKeyword">this</span> script<span class="docuCodeOp">:</span> "</span> <span class="docuCodeOp">+</span> <span class="docuCodeKeyword">size</span><span class="docuCodeOp">(</span><span class="docuCodeOp">@</span>args<span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div></p><div class="docuSubCapt"><a name="7">7.7 Stack Syntax for Arrays</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>There is a syntax for the simple use of arrays as stacks. The syntax is (like in PHP):
+<div class="docuCode">arrayname<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span></div>
+where &lt;arrayname&gt; is an array variable or a function returning an array.
+This can also be used to store data in an array easily when you don't care about at which index it is stored.</p>
+
+<p>When this expression is used on the left side of an assignment (lValue) it will push the value on the right (rValue) onto
+the stack, i.e. find the smallest integer key in this array that is greater than every other int key in the array (or 0 if no int key exists yet in this array) and assign the value to it.
+<div class="docuCode">arrayname<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> valueToBePushedOntoTheStack<span class="docuCodeOp">;</span></div></p>
+
+<p>When the expression is used in another context it will return the top of the stack without removing it (also called peek).
+<div class="docuCode"><span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>arrayname<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">+</span> <span class="docuCodeString">""</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//echoes the top of the stack</span></div></p>
+
+<p>When the expression is used in an [ref=unset]unset expression[/unset] it will remove the top element from the stack and return it (also called pop).
+<div class="docuCode"><span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>arrayname<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Removes the top element from the stack</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">""</span> <span class="docuCodeOp">+</span> <span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>arrayname<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Removes and echoes the top element from the stack</span></div>
+If pop or peek is used while the array has no int keys, they will return null (and pop won't remove an element since there is none).</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Create an array which we will use as a stack</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"a"</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//push "a"</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"b"</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//push "b"</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"c"</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//push "c"</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>a <span class="docuCodeOp">+</span> <span class="docuCodeString">""</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Will output array([0] =&gt; "a" [1] =&gt; "b" [2] =&gt; "c")</span>
+ 
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Will output "a"</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Remove a</span>
+<span class="docuCodeKeyword">echoln</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Will output "b"</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Remove b</span>
+<span class="docuCodeKeyword">echoln</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Will output "c"</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Remove c</span>
+<span class="docuCodeKeyword">echoln</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span> 		<span class="docuCodeComment">//Will output "null");</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span><span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Will remove nothing, since the stack is empty</span></div></p><div class="docuSubCapt"><a name="8">7.8 Array Index Auto Creation</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>When you want to create multidimensional arrays you would have to use, something like that:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//create the first dimension</span>
+a<span class="docuCodeOp">[</span>1<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//create another dimension at the index 1</span>
+a<span class="docuCodeOp">[</span>1<span class="docuCodeOp">]</span><span class="docuCodeOp">[</span>6<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Now we can use this dimension</span></div>
+This sucks however, because you will have to check if an entry already exists. If not, then create a new array for the entry you want to use. If you need even more dimensions, you will have even more work checking for and creating arrays.</p>
+
+<p>So GSL offers you "Array Index Auto Creation". So if a multidimensional syntax is used as lValue (on the left side of an assignment) all missing arrays will be created, so you can use such a syntax:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>1<span class="docuCodeOp">]</span><span class="docuCodeOp">[</span>2<span class="docuCodeOp">]</span><span class="docuCodeOp">[</span>3<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"my 3d dimension entry"</span><span class="docuCodeOp">;</span></div>
+The arrays at the index 1 and the array in the array at index 2 don't exit. So GSL creates them automatically when using such a syntax.</p><div class="docuSubCapt"><a name="9">7.9 Pointers</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>GSL supports pointers. However these are just symbolic references to the variables, no real memory addresses, so <b>you cannot use pointer arithmetics on GSL pointers</b>. Everything else is possible like known from C.</p>
+
+<p>A pointer is defined like that:
+<div class="docuCode">VARTYPE<span class="docuCodeOp">*</span> POINTERNAME<span class="docuCodeOp">;</span></div>
+This defines a pointer to a variable of type &lt;VARTYPE&gt; which is named &lt;POINTERNAME&gt;. 
+You can then use the reference operator & to get a reference to a variable of type &lt;VARTYPE&gt; and use the indirection operator * to retrieve the value of the variable to which &lt;POINTERNAME&gt; points.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>	
+<span class="docuCodeType">int</span><span class="docuCodeOp">*</span> point <span class="docuCodeOp">=</span> <span class="docuCodeOp">&</span>i<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//point now holds a reference to the variable i</span>
+<span class="docuCodeOp">*</span>point <span class="docuCodeOp">=</span> 255<span class="docuCodeOp">;</span>		<span class="docuCodeComment">//The variable onto which point points (i in this case) is set to 255</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">""</span> <span class="docuCodeOp">+</span> i<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//will echo 255 since it was set to this value using the pointer</span></div></p><div class="docuSubCapt"><a name="10">7.10 The .type Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The EXPRESSION.type operator evaluates the expression and then stands for the type of the expression.
+It can be used in:
+<ul class="docList"><li>typecasts</li><li>constructors</li><li>instanceof expressions</li></ul></p>
+
+<p>Examples:
+use in typecasts:
+<div class="docuCode"><span class="docuCodeType">var</span> a <span class="docuCodeOp">=</span> <span class="docuCodeString">"f"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 35<span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeType">var</span> x <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>a<span class="docuCodeOp">.</span><span class="docuCodeKeyword">type</span><span class="docuCodeOp">)</span>i<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Casts i to string, since a contains an instance of type string</span></div></p>
+
+<p>use in constructors:
+<div class="docuCode"><span class="docuCodeType">var</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeType">var</span> x <span class="docuCodeOp">=</span> a<span class="docuCodeOp">.</span><span class="docuCodeKeyword">type</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Creates a new array, since a.type evaluates to the type array</span></div></p>
+
+<p>use in instanceof expressions:
+<div class="docuCode"><span class="docuCodeType">var</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">var</span> x <span class="docuCodeOp">=</span> <span class="docuCodeType">struct</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">bool</span> b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>a <span class="docuCodeKeyword">instanceof</span> x<span class="docuCodeOp">.</span><span class="docuCodeKeyword">type</span><span class="docuCodeOp">)</span>	<span class="docuCodeComment">//False, since x.type evaluates to struct and a is not an instance of struct</span></div></p><div class="docuSubCapt"><a name="11">7.11 The .strtotype Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The EXPRESSION.strtotype operator evaluates the expression, casts its value to string and uses this value as a type.</p>
+
+<p>It can be used everywhere where you can also use <a href="c7.html#10">the .type operator</a></p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">var</span> x <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeType">array</span>"</span><span class="docuCodeOp">.</span><span class="docuCodeKeyword">strtotype</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Creates a new array, since a.type evaluates to the type array</span>
+<span class="docuCodeType">var</span> y <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeString">"<span class="docuCodeType">string</span>"</span><span class="docuCodeOp">.</span><span class="docuCodeKeyword">strtotype</span><span class="docuCodeOp">)</span>234<span class="docuCodeOp">;</span><span class="docuCodeComment">//Casts the int 234 to string</span></div></p><div class="docuSubCapt"><a name="12">7.12 The .typetostr Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>This operator is somehow the opposite of the typetostr operator.
+It can be used in two contexts:
+It takes a type and returns a string containg the type's name:</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeType">int</span><span class="docuCodeOp">.</span><span class="docuCodeKeyword">typetostr</span><span class="docuCodeOp">;</span> 	<span class="docuCodeComment">//s contains now "int";</span></div></p>
+
+<p>or it can take an expression. It evaluates the expression, gets its value's type and returns a string with this type's name:</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"sdfb"</span><span class="docuCodeOp">.</span><span class="docuCodeKeyword">typetostr</span><span class="docuCodeOp">;</span> 	<span class="docuCodeComment">//s contains now "string" since "sdfb" is of type string;</span></div></p><div class="docuSubCapt"><a name="13">7.13 The .call() Operator</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>This operator allows you to call a function which name is handed as a string.
+Syntax:
+<div class="docuCode">EXPRESSION<span class="docuCodeOp">.</span><span class="docuCodeKeyword">call</span><span class="docuCodeOp">(</span>PARAMLIST<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div></p>
+
+<p>&lt;EXPRESSION&gt; is an expression which is evaluated and which has to return a value of type string. This string is then used as function name and called with the parameters specified in &lt;PARAMLIST&gt;, which is used like in normal function calls.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeKeyword">echo</span>"</span><span class="docuCodeOp">;</span>
+	s<span class="docuCodeOp">.</span><span class="docuCodeKeyword">call</span><span class="docuCodeOp">(</span><span class="docuCodeString">"foobar"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Calls the function echo with the paramter "foobar". Same as echo("foobar");</span></div></p>
+
+<p>This can be used to store functions in arrays, by just storing their name or passing function names as parameters to other functions.</p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c8.html">NEXT CHAPTER</a>
+	 | <a href="c6.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

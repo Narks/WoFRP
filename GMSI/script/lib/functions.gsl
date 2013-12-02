@@ -1,0 +1,128 @@
+/**
+*	This demonstration library shows you how you can use pattern matching
+*	for finding functions in the trigger code.
+*	It is able to find all functions in a map's script and returning them as a struct function,
+*	which contains the name, the return type the signature and the function's body and information
+*	on where it was found, which can be used to alter or delete it.
+*
+*	However it is not meant as a full working function handle library.
+*	(It doesn't support vJass public/private functions and methods for example)
+*
+*	It is meant as an example of what you can do in a few lines using the pattern matcher
+*
+*	The library could be extended easily for example to include the following things:
+*	-altering/deleting/adding functions
+*	-supporing vJass: i.e. finding structs, globals, methods, modified functions, libraries, scopes ...
+*	-checking if a global is used in any function, deleting unused globals
+*	-and everything else you can imagine :).
+*
+*	If someone wants to code that, he can send me the library, I will include it into the
+*	next release of GMSI.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2009
+*	@type Library
+*/
+
+
+include ("common.gsl");
+include ("string.gsl");
+
+/**
+*	A function as received from loadFunctions
+*/
+typedef Function struct{
+	string name;	//the function's name
+	string signature;	//the function's signature
+	string returnType;	//the function's return type
+	string body;		//the function's body
+	
+	//Location in the triggers
+	Trigger containingTrigger = null; 	//The trigger the function was found in, null if it was found in the map header
+	string* foundIn;					//A pointer to the string where it was found in
+	int startIndex;
+	int endIndex;
+}
+
+/**
+*	Internal pattern used for finding functions
+*/
+global string functionPattern = "function\\s+(\\w+)\\s+takes\\s+(.+?)\\s+returns\\s+(\\w+)\\s*\\n(.*?)\\n?\\s*endfunction";
+
+
+/**
+*	Function that finds all functions in a string to which <code> points
+*/
+array<Function> findFunctions(String* code){
+	array<Function> result = array();
+	
+	//find functions
+	array<Match> matches = findAll(*code,functionPattern);
+	
+	for(int i: matches){
+		Match m = matches[i];
+		Function f = Function();
+		
+		//put data from match to function
+		f.name = m.groups[1];
+		f.signature = m.groups[2];
+		f.returnType = m.groups[3];
+		f.body = m.groups[4];
+		f.startIndex = m.start;
+		f.endIndex = m.end;
+		f.foundIn = code;
+		
+		//Add to result array
+		result[] = f;
+	}
+	return result;
+}
+
+/**
+*	Function that finds all functions in a trigger <t>
+*/
+array<Function> findFunctions(Trigger t){
+	//No custom trigger? Cannot contain functions, return empty array!
+	if(!t.isCustomText) return array();									
+	
+	//Find functions in the trigger's code
+	array<Function> result = findFunctions(&(t.code));	
+	
+	//Set the trigger t as container
+	for(int i: result){											
+		result[i].containingTrigger = t;
+	}
+	return result;
+}
+	
+/**
+*	Finds all functions in the map <map>
+*/
+array<Function> findFunctions(Map map){
+	array result = array();
+	
+	//Is the script section loaded?
+	if(map.script == null) fail("Cannot findFunctions in map, the triggers are not loaded!");
+	
+	//search map header
+	result = findFunctions(&(map.script.headerCode));
+	
+	//search all triggers
+	array<Trigger> triggers = map.script.triggers;
+	for(int i: triggers){
+		appendArray(result,findFunctions(triggers[i]));
+	}
+	
+	return result;
+}
+
+/**
+*	Gets the code of a function by cropping it from the string where the function was found
+*	(If you alter the string after finding the function this function will get you wrong results of course)
+*/
+string getFunctionCode(Function f){
+	return substr(*(f.foundIn),f.startIndex,f.endIndex);
+}

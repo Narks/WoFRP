@@ -1,0 +1,66 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c9.html">NEXT CHAPTER</a>
+	 | <a href="c7.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">8. General GMSI Info</div></p>
+
+<p>This section will tell you how to use the program correctly and how to refer with altered maps.</p><div class="docuSubCapt"><a name="1">8.1 What does this program do?</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>This program executes a gsl (Gex's Script Language) script. These scripts are designed to alter 
+WC3 - The Frozen Throne maps fast and simply.</p><div class="docuSubCapt"><a name="2">8.2 Starting the program</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>You can start the program by starting "GMSI.bat" or "GMSI.jar" in the main folder. Since GMSI is written in JAVA, you require an up to date JAVA Runtime Environment (JRE) on your machine to run it. You can get the latest JRE at http://java.sun.com.</p>
+
+<p>If the GMSI.bat is not supported by your operating system, you can directly start the jar file. However, if you want to load more maps concurrently or load the environment of a large (256x256) map, you should start the .jar from your console with this command:
+"java -Xmx512m -jar GMSI.jar"
+This will increase the max heap size of your JAVA Virtual Machine to 512mbyte. Otherwise, the heap is limited at 128mb which is too less space for the requested operations. You will then probably receive a OutOfMemoryError.</p><div class="docuSubCapt"><a name="3">8.3 Resynchronization with WarcraftIII</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>After unzipping a new version of GMSI you should first resync it with your WC3 Installation. If you don't do that GMSI uses the data from my WC3 installation when i built the version (which is german and might be outdated if WC3 was patched since then).
+You do that by first adding the full path of your WC3 main directory to the gmsi.ini (which is located in GMSI's main folder):</p>
+
+<p>gmsi.ini before:
+<div class="docuCode"><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+ 
+<span class="docuCodeOp">[</span>FOLDERS<span class="docuCodeOp">]</span>
+wc3Folder<span class="docuCodeOp">=</span>
+<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span></div></p>
+
+<p>gmsi.ini after:
+<div class="docuCode"><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+ 
+<span class="docuCodeOp">[</span>FOLDERS<span class="docuCodeOp">]</span>
+wc3Folder<span class="docuCodeOp">=</span>c<span class="docuCodeOp">:</span><span class="docuCodeOp">\</span>myGameFolder<span class="docuCodeOp">\</span>myWarcraft3Folder
+<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span></div></p>
+
+<p>After you have done that start the program and click "Synchronized Data with WC3" in the menu "File" at the top menu bar.
+The data GMSI needs will be rebuilt from your WC3 installation.
+Then you can use the program without having to worry about wrong base data.</p><div class="docuSubCapt"><a name="4">8.4 Using the GUI</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>When you start the program without any additional command line parameters, the GUI will show up. In the tab "Script Explorer" you can see the different folders and scripts. Choose a script you want to execute and double click it to start it or double click a map to start the script contained in it (For this see also <a href="c8.html#8">Writing / Executing scripts</a>).</p><div class="docuSubCapt"><a name="5">8.5 Using the commandline</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>If you start GMSI with additional command line parameters, the GUI won't show up. Instead you will have a console application that you can call parameterized from other programs or from batch files.</p>
+
+<p>As the first parameter a script file name is required (from the GMSI main path). All parameters behind the first one will be passed to the script. Inside the script they can be accessed using the @args array, which stores one entry for every parameter.</p>
+
+<p>Example:
+java -Xmx512m -jar GMSI.jar script/buildTooltips.gsl input/myMap.w3x</p>
+
+<p>This will start the script buildTooltip.gsl. This script wants the map onto which it should be applied as first parameter, so in this case, the script would be used on the map input/myMap.w3x.</p>
+
+<p>Every good script should enable the user to type the needed parameters into the console rather than entering them using dialoges, otherwise the script can't be called automatically from other programs or batch files. For more information on how to do that see <a href="c9.html#5">gathering input parameters</a></p><div class="docuSubCapt"><a name="6">8.6 Using maps after they got changed by a script</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>First of all: <b>Always make a safecopy of your map, even if I tried to care about everything when coding this tool, there may be some glitches and some of your map data may get corrupted by the tool (if that happens, inform me immediatly).</b>
+If you run a script on one of your maps, you <b>have to reload the map in your World Edit and save it again there</b>. This is because GMSI doesn't rebuild the pathing map and the .j file which are necessary for playing them. Upon saving your map in the editor again, the editor does the rebuilding and you can play the map.</p><div class="docuSubCapt"><a name="7">8.7 Which maps can be altered using the script?</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The WC3 Map API supports only the TFT file format. Normal WC3 maps (.w3m) are not supported! In addition capaigns are not supported. However, since they use the same file format as normal maps, you could be able to load and save them and alter some parts. However I don't think all parts of the map will be accessable, since the wc3campaign.xxx files are not loaded/saved when loading/saving your map.</p>
+
+<p>GMSI cannot be applied on protected maps (since these miss important files). I could have made GMSI reconstruct the files, but GMSI was not designed as a map deprotection for greenhorns without own ideas, but as a mighty tool for people who want to improve their map.</p><div class="docuSubCapt"><a name="8">8.8 Writing / Executing scripts</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>You can simply write a script file (*.gsl) and then execute it using the GUI. However, if you script is specificly designed for one single map, you can also make the map itself executable. You do that by adding a trigger comment into your map and call it "script.ini". If a map is double clicked in the GUI then the program will open it and look for a trigger called "script.ini". If none is found an error is thrown, but if one is found its content is executed as GSL code.</p>
+
+<p>Since a trigger comment doesn't have enough space to write whole scripts into it (unless they are very short), you can just import another script file in the script.ini (that's why it is called ini, it should only do initialization work and then pass the work to a script file).</p>
+
+<p>Inside such executed map, you have access to two variables:
+1.) The struct that contains the executed map itself
+<div class="docuCode"><span class="docuCodeKeyword">global</span> Map map<span class="docuCodeOp">;</span></div></p>
+
+<p>2.) An <a href="c7.html#6">external variable</a> that contains the path of the map
+<div class="docuCode"><span class="docuCodeType">String</span> <span class="docuCodeOp">@</span>map<span class="docuCodeOp">;</span></div></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c9.html">NEXT CHAPTER</a>
+	 | <a href="c7.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

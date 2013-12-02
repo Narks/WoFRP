@@ -1,0 +1,145 @@
+v2.1.20
+-GSL v1.16 is used now
+-Some errors that were not displayed in the console are now displayed there. (All errors should now be displayed in the console
+-When using GMSI.bat to start the program (which is recommended), you no longer get a console window in addition to the GMSI GUI
+-The latest JNA library is used, so the program now works on Windows7 and other new operating systems.
+
+v2.1.19
+-Some minor fixes
+
+v2.1.18
+-GSL v1.15 is now used
+
+v2.1.17
+-You no longer get a warning when creating objects with different IDs than the base object
+
+v2.1.16
+-Fixed that objectId2Int was not recognized as native in v2.1.15
+
+v2.1.15
+-You are now able to create objects with non alphanumeric object ids like '%34%'
+-Added the objectId2Int and int2ObjectId functions to objects.gsl which allow transformation between object ids and integers
+-Fixed an error in the native strpos that sometimes caused a null error
+-GSL v1.14 is now used
+
+v2.1.14
+-GSL v1.13 is now used
+
+v2.1.12-13
+-some small changes
+
+v2.1.11
+-You now have a GUI even when starting with command line parameters
+-You are now able to abort a currently running script in the monitor panel
+
+v2.1.10
+-Fixed an error with the JNGP injection
+-Added a new function to io.gsl
+-The screenshot function in JNGP now adds a proper suffix to the safed file if none is specified
+
+v2.1.9
+-GSL v1.12 is used
+-Added the library image.gsl which supports image loading, altering, saving and taking screenshots. However, it is still not finished yet
+-The stack trace and other information about errors is no longer shown in the script output tab. This confused many users. It is still displayed in the log & warnings tab
+-It is now possible to hand maps as command line parameters (which will get their script.ini executed)
+-GMSI can now overwrite the map it loaded. So, by using for example saveMap(map,@map); you can save the opened map back to where it was loaded from.
+-GMSI now comes with a script to inject GMSI into JNGP which adds a GMSI menu in the WorldEditor which allows you to conveniantly use GMSI functions
+-Added the takeScreenshot script
+
+v2.1.8
+-Fixed another null error in certain situations
+-Fixed that some xxxart object editor values were not loaded correctly from the default values (since blizzard mistyped them in their .txt files...)
+
+
+v2.1.7
+-GSL v1.11 is used
+-fixed a bug with saving rectangles causing a crash
+-fixed an issue with indexing in some Object Editor values like ButtonPos
+-fixed that the tool crashed with a null error when your map used a TRIGSTR number that is not present in the map's string file.
+ Now, instead a warning will be displayed and the missing TRIGSTR will be replaced by an empty string
+
+v2.1.6
+-GSL v1.10 is used
+-fixed a bug in the library objects.gsl
+
+v2.1.5
+-fixed a bug with the pattern matcher
+
+v2.1.4
+-fixed a bug with abilitydata not working correctly
+
+v2.1.3
+-fixed that clicking execute script on a map executed the maps raw binary code as gsl code instead of extracting the script.ini trigger
+
+v2.1.2
+-GSL v1.9 is used now
+
+v2.1.1
+-You are now able to include libraries in a map's script.ini which are in the same folder as the map
+(previously, due to a bug, only libraries on the library paths were possible there)
+-GSL v1.8 is used now
+-Fixed that you were unable to save maps in GMSI's main folder (caused a null error)
+-Maps no longer get saved in new folders in the temp folder for each map you load (saves disk space)
+-Had to rename the type for upgrades from "Upgrade" to "Upgr" in wc3Mapdefinitions.gsl, because "Upgrade" is used as a unit attribute name
+-The program now aborts the script with an error if you try to save a map that contains an Object Editor string which is longer than 1023 chars
+ (this is the maximum for OE string, longer strings crash your editor)
+-Fixed that some ability/upgrade/unit fields (Tip, Ubertip, Untip, Unubertip, and some more) were named wrong when loaded from a map file
+-Fixed that some object default strings were loaded wrong (as a commalist of all level values instead of single values for every level)
+-Fixed that some object default strings were loaded with double quotes surrounding them
+
+v2.1.0
+-Added the Settings Menu to the GUI which lets you alter ini values in the GUI
+-Added a warning at startup if the program isn't synced with Warcraft 3 yet
+-GSL v1.7 is used now
+
+v2.0.7
+-GSL v1.6 is used now
+-The export function now also checks the w3xlocal.mpq
+-No more object editor data is missing (like the names of some abilities were previously)
+-Since GSL v1.6 introduces the keyword type, the two appearances of the var name "type" in Wc3mapdefinitions.gsl had to be changed to "typ"
+
+v2.0.6
+-GSL v1.5 is used now (Note that it adds new mighty libraries)
+-Fixed a very rare error when an object had the ID of another base object (this crashed the tool)
+-Drastically increased the speed of the console. The console is now limited to 25000 characters for additional speedup on large outputs
+-The strings of the human abilities were missing, this is fixed
+-You are now able to synchronize GMSI base data with your WC3 installation (for language synchronization)
+-Warnings are also written in the script output monitor now
+-Beautified error messages and added a call stack
+-Added the library functions.gsl as a showcase of what is possible when using the pattern matcher
+-Added the example script findFunctions.gsl that shows the basic use of functions.gsl
+-Added the chapter "Resynchronization with Warcraft3" to the manual
+
+v2.0.5
+-Fixed a severe bug, that Button Positions and some other values were corrupted by the script
+-GSL v1.4 is used now
+
+v2.0.4
+-Some GUI improvements (refresh button for the file tree, restart button for the last started script, script menu)
+-The function getId works now
+-GSL v1.3 is used now
+-The View Source button should now work correctly
+
+
+v2.0.3
+-You can now also not only execute scripts from the GUI but also maps. If you do so, the program will
+search for a trigger comment called "script.ini" in the map and execute its content as GSL code
+-Rect coordinates where read wrong, this is fixed
+-The function getBaseId works now
+-Fixed an error regarding abilities not beeing loaded correctly from the file
+
+v2.0.2
+-GSL v1.2 is used now
+-Added 3 new sections to the manual
+
+v2.0.1
+-The application no longer crashes if the windows look&feel is not available
+-The GSL documentation is now available in the doc folder
+-GSL v1.1 is used now
+-The script no longer crashes with a null pointer exception when trying to get an object value which doesn't exist, instead it correctly return null now.
+-Fixed 2 errors in the script buildTooltips.gsl
+-Added a new help menu with about information and a link to the documentation
+
+v2.0.0
+-First release
+-GSL version used: v1.0

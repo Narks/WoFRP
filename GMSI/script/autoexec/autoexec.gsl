@@ -1,0 +1,21 @@
+/**
+*	This file is executed automatically upon program startup
+*
+*	This means you don't have to include any of the files included here into your script, they will
+*	always get loaded before anything else because they contain essential system calls
+*	and struct definitions. You can add your own includes or orders to this file, that you want to
+*	have in each of your projects
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*/
+
+include("wc3MapDefinitions.gsl");	//Define map structs and data types
+include("wc3MapIO.gsl");			//Define functions for loading and saving a map
+include("macros.gsl");				//Define functions for the macro engine
+include("pattern.gsl");				//Defines functions for pattern matching
+

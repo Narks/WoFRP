@@ -1,0 +1,67 @@
+
+div.docu{
+	max-width:100%;
+}
+
+div.docuNavi{
+	font-weight:bold;
+	font-size:18px;
+	margin-top:20px;
+}
+
+div.docuCode{
+	margin-right:auto;
+	width:auto;
+	margin-left:10px;
+	background-color: FFFFCC;
+	white-space: pre;
+	font-family: Courier New;
+	font-size: 12px;
+}
+
+
+div.docuCapt{
+	font-weight:bold;
+	font-size: 30px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+div.docuSubCapt{
+	font-weight:bold;
+	font-size: 20px;
+	margin-top: 60px;
+}
+
+div.docuSubCapt span.top{
+	font-size: 10px;
+}
+
+div.docu ul{
+	white-space: normal;
+	margin-bottom: 8px;
+	margin-top: 8px;
+	
+}
+
+span.docuCodeKeyword{
+	font-weight:bold;
+	color: #770077;
+}
+
+span.docuCodeType{
+	color: #0000FF;
+}
+
+span.docuCodeString{
+	color: #442288;
+}
+
+span.docuCodeComment{
+	color: #226622;
+}
+
+span.docuCodeOp{
+	color: #000077;
+	font-weight: bold;
+}

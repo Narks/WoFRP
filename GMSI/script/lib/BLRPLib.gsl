@@ -1,0 +1,181 @@
+include("objects.gsl");
+
+global string UNIT_MELEE_BASEID;
+global string UNIT_RANGED_BASEID;
+global string HERO_BASEID = "Nkjx";
+
+global string UNIT_SHOP_BASEID;
+global string ITEM_SHOP_BASEID;
+/**
+*	This very mighty function can be used to create new objects in your map.
+*	However you should read this comment carefully or you might crash your map!
+*	createObject creates a new Object derived from the object with the id <baseId>.
+*	It gets the id <newId> and is inserted into the specified map.
+*	If an object with id <newId> already exists and <overwrite> is set, than that object will be overwritten.
+*	If <overwrite> is not set it will throw an error thus stopping script execution.
+*
+*	The parameter <baseId> must be a valid baseId, i.e. the id of a predefined wc3 object
+*
+*	The parameter <newId> must be a valid custom Id, i.e. NOT a predefined wc3 object id.
+*	It must be well formed, i.e. four letters only letters and digits.
+*
+*	The function is fail-safe, so it will always crash, if a parameter is malformed and will NOT entry malformed
+*	objects into your map!
+*/
+/*
+Wc3obj createObject(Map mapHandle, string baseId, string newId, bool overwrite){
+	if(mapHandle.objects == null) fail("you must load the objects of your map before you can use <createObject>");
+	return trap("createObject");
+}
+*/
+
+void AddUnit(string aUnitId, string aName, string aModel, bool aIsRanged)
+{
+	Wc3obj lNewUnit;
+	if (aIsRanged == false)
+	{
+		lNewUnit = createObject(map, UNIT_MELEE_BASEID, aUnitId, false);
+	}
+	else
+	{
+		lNewUnit = createObject(map, UNIT_RANGED_BASEID, aUnitId, false);
+	}
+	lNewUnit.file = aModel;
+	lNewUnit.Name = aName;
+}
+
+void AddHero(string aUnitId, string aName, string aModel)
+{
+	Wc3obj lNewUnit;
+	lNewUnit = createObject(map, HERO_BASEID, aUnitId, false);
+	lNewUnit.file = aModel;
+	lNewUnit.Name = aName;
+}
+
+void UnitToHero(string aUnitId, string aBaseUnitId, string aName)
+{
+	Wc3obj lNewUnit = createObject(map, HERO_BASEID, aUnitId, false);
+	Wc3obj lBaseUnit = map.objects[aBaseUnitId];
+	
+	if (aName != null)
+	{
+		lNewUnit.Name = aName;
+	}
+	else
+	{
+		lNewUnit.Name = lBaseUnit.Name;
+	}
+	
+	lNewUnit.blend = lBaseUnit.blend;
+	lNewUnit.castbsw = lBaseUnit.castbsw;
+	lNewUnit.castpt = lBaseUnit.castpt;
+	lNewUnit.run = lBaseUnit.run;
+	lNewUnit.walk = lBaseUnit.walk;
+	lNewUnit.occH = lBaseUnit.occH;
+	lNewUnit.maxPitch = lBaseUnit.maxPitch;
+	lNewUnit.maxRoll = lBaseUnit.maxRoll;
+	lNewUnit.file = lBaseUnit.file;
+	lNewUnit.impactSwimZ = lBaseUnit.impactSwimZ;
+	lNewUnit.impactZ = lBaseUnit.impactZ;
+	lNewUnit.launchX = lBaseUnit.launchX;
+	lNewUnit.launchY = lBaseUnit.launchY;
+	lNewUnit.launchSwimZ = lBaseUnit.launchSwimZ;
+	lNewUnit.launchZ = lBaseUnit.launchZ;
+	lNewUnit.animProps = lBaseUnit.animProps;
+	lNewUnit.Attachmentanimprops = lBaseUnit.Attachmentanimprops;
+	lNewUnit.Attachmentlinkprops = lBaseUnit.Attachmentlinkprops;
+	lNewUnit.scale = lBaseUnit.scale;
+	lNewUnit.unitShadow = lBaseUnit.unitShadow;
+	lNewUnit.shadowX = lBaseUnit.shadowX;
+	lNewUnit.shadowY = lBaseUnit.shadowY;
+	lNewUnit.shadowH = lBaseUnit.shadowH;
+	lNewUnit.shadowW = lBaseUnit.shadowW;
+	lNewUnit.Specialart = lBaseUnit.Specialart;
+	lNewUnit.collision = lBaseUnit.collision;
+
+	lNewUnit.backSw1 = lBaseUnit.backSw1;
+	lNewUnit.dmgpt1 = lBaseUnit.dmgpt1;
+	lNewUnit.backSw2 = lBaseUnit.backSw1;
+	lNewUnit.dmgpt2 = lBaseUnit.dmgpt1;
+	lNewUnit.weapType1 = lBaseUnit.weapType1;
+
+	lNewUnit.rangeN2 = 700;
+
+	lNewUnit.bldtm = 1;
+	lNewUnit.bountyplus = 0;
+	lNewUnit.bountydice = 0;
+	lNewUnit.bountysides = 0;
+	lNewUnit.goldcost = 0;
+	
+	lNewUnit.lumbercost = 0;
+	lNewUnit.points = 0;
+	lNewUnit.goldRep = 0;
+	lNewUnit.lumberRep = 0;
+	lNewUnit.stockMax = 1;
+	lNewUnit.stockRegen = 0;
+
+	lNewUnit.Propernames = "Hero";
+	lNewUnit.Awakentip = "Revive Hero";
+	lNewUnit.Hotkey = "";
+	lNewUnit.Revivetip = "Revive Hero";
+
+}
+
+void AddUnitShop(string aUnitId, string aName, string aModel, float aScale, string aId1, string aId2, string aId3, string aId4,
+string aId5, string aId6, string aId7, string aId8, string aId9, string aId10, string aId11)
+{
+	Wc3obj lNewUnit;
+	lNewUnit = createObject(map, UNIT_SHOP_BASEID, aUnitId, false);
+	lNewUnit.file = aModel;
+	lNewUnit.Name = aName;
+	lNewUnit.modelScale = aScale;
+	string lUnitsSold = "";
+	if (aId1 != null) { lUnitsSold += aId1; }
+	if (aId2 != null) { lUnitsSold += "," + aId2; }
+	if (aId3 != null) { lUnitsSold += "," + aId3; }
+	if (aId4 != null) { lUnitsSold += "," + aId4; }
+	if (aId5 != null) { lUnitsSold += "," + aId5; }
+	if (aId6 != null) { lUnitsSold += "," + aId6; }
+	if (aId7 != null) { lUnitsSold += "," + aId7; }
+	if (aId8 != null) { lUnitsSold += "," + aId8; }
+	if (aId9 != null) { lUnitsSold += "," + aId9; }
+	if (aId10 != null) { lUnitsSold += "," + aId10; }
+	if (aId11 != null) { lUnitsSold += "," + aId11; }
+	lNewUnit.Sellunits = lUnitsSold;
+}
+
+void AddItemShop(string aUnitId, string aName, string aModel, float aScale, string aId1, string aId2, string aId3, string aId4,
+string aId5, string aId6, string aId7, string aId8, string aId9, string aId10, string aId11)
+{
+	Wc3obj lNewUnit;
+	lNewUnit = createObject(map, ITEM_SHOP_BASEID, aUnitId, false);
+	lNewUnit.file = aModel;
+	lNewUnit.Name = aName;
+	lNewUnit.modelScale = aScale;
+	string lItemsSold = "";
+	if (aId1 != null) { lItemsSold += aId1; }
+	if (aId2 != null) { lItemsSold += "," + aId2; }
+	if (aId3 != null) { lItemsSold += "," + aId3; }
+	if (aId4 != null) { lItemsSold += "," + aId4; }
+	if (aId5 != null) { lItemsSold += "," + aId5; }
+	if (aId6 != null) { lItemsSold += "," + aId6; }
+	if (aId7 != null) { lItemsSold += "," + aId7; }
+	if (aId8 != null) { lItemsSold += "," + aId8; }
+	if (aId9 != null) { lItemsSold += "," + aId9; }
+	if (aId10 != null) { lItemsSold += "," + aId10; }
+	if (aId11 != null) { lItemsSold += "," + aId11; }
+	lNewUnit.Sellitems = lItemsSold;
+}
+
+
+void RemoveAllHeroAbilities()
+{
+	for (string s: map.objects)
+	{
+		Wc3obj myObject = map.objects[s];
+		if (myObject instanceof Unit)
+		{
+			myObject.heroAbilList = "";
+		}
+	}
+}

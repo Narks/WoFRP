@@ -1,0 +1,45 @@
+/**
+*	This library contains useful miscellaneous functions, like
+*	- exporting Files from your map/mpq archives
+*	- writing to external files
+*
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.1
+*	@date 2008
+*	@type Library
+*/
+
+/**
+*	Exports the file "path" from an mpq archive to "newpath" in the output folder
+*	It searches for the file just like warcraft 3:
+*	First it searches in the mapfile itself, if the file is not present there
+*	it searches in the war3patch.mpq then in war3x.mpq and finally in war3.mpq
+* 	If the file is in none of these (so the export failed), the function will return false, otherwise true
+*
+*	If <map> is null, then the file will only be searched for in the mpqs
+*/
+native bool exportFile(Map map,string path, string newpath);
+
+/*
+*	Writes the string "message" to the file "fileName" in the output folder
+*	If "append" is true, then the message is appended to the file, otherwise the file will
+*	be cleared before writing.
+*/
+native void write(string fileName, string message, bool append);
+
+
+/**
+*	Adds the file <file> as an import to your map.
+*	<nameInArchive> is the path and name, that the file will have in the map
+*	the method returns the Import struct
+*/
+Import addImport(Map map, string file, string nameInArchive){
+	trap("addImport");
+	Import i = Import();
+	i.path = nameInArchive;
+	map.imports[] = i;
+	return i;
+}

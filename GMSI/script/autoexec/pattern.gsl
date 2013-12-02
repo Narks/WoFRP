@@ -1,0 +1,71 @@
+/**
+*	Contains functions for convenient pattern matching, finding and replacing
+*
+* 	As pattern syntax the original Java Pattern syntax is used. So write your pattern, as you would write them in Java
+*
+*	If you are unfamiliar with Java patterns read http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
+*
+*	However, there is one difference to Java Patterns: These patterns dont have flags (since they are only strings)
+*	like the case insensitive flag and the DOTALL flag (if you don't know what these are, read the link above again ;).
+*	The DOTALL operator is activated by default!
+*
+*	However you can use these flags by prefixing your patterns with the appropriate escape sequence(s):
+*	\l Dot Line matching: Deactivates the DOTALL flag
+*	\i Case Insensitive match
+*
+*	Example: "\\ifoo" does a case insensitive match for the word foo
+*
+*	The find methods return a struct of type Match (or an array of this type in the case of findAll), this contains all capturing groups in an array
+*	and the start and end index of the match.
+*
+*	Read the struct and function comments for more information
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*/
+
+/**
+*	The result of a successful match:
+*	start denotes the start index, i.e. the index of the first found sign
+*	end denotes the end index, i.e. the index of the last found sign + 1
+*	groups is an array that contains the capturing groups of the pattern (if you don't know what capturing groups are check http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html)
+*	
+*	The group with index zero is the whole matched string
+*	
+*/
+typedef Match struct{
+	int start;
+	int end;
+	array<string> groups;
+}
+
+/**
+*	Finds and returns the first match of the <pattern> against the <input>
+*	If the pattern didn't match anywhere in the input, null will be returned
+*/
+native Match find(string input, string pattern);
+
+/**
+*	Finds all appearances of <pattern> in <input> and returns them as an array.
+*	If no matches are found, the array is empty
+*/
+native array<Match> findAll(string input, string pattern);
+
+/**
+*	Replaces the first instance of <pattern> in <input> with <replacement> and returns the altered string
+*/
+native string replace(string input, string pattern, string replacement);
+
+/**
+*	Replaces all instances of <pattern> in <input> with <replacement> and returns the altered string
+*/
+native string replaceAll(string input, string pattern, string replacement);
+
+/**
+*	Returns true, if the <pattern> matches the entire <input>
+*/
+native bool matches(string input, string pattern);

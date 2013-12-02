@@ -1,0 +1,157 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c5.html">NEXT CHAPTER</a>
+	 | <a href="c3.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">4. Control Structures</div></p><div class="docuSubCapt"><a name="1">4.1 if</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Like most languages, GSL knowns the if statement. Syntax:
+<div class="docuCode"><span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>condition<span class="docuCodeOp">)</span> thenStatement
+<span class="docuCodeKeyword">else</span> elseStatment</div>
+The semantics is the common one: If &lt;condition&gt; evaluates to true, then thenStatement is executed, else elseStatement is executed. The else statement may be missing, then nothing is done in the case that &lt;condition&gt; is false.</p>
+
+<p>If more than a statement should be executed either in the then part or the else part, then the statements have to be grouped to a statement block by surrounding them with curly brackets (See also: <a href="c1.html#2">Statement Blocks</a>).</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> j <span class="docuCodeOp">=</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>i&gt;j<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"i is greater than j"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//only one statement in then part: no brackets needed</span>
+<span class="docuCodeKeyword">else</span> <span class="docuCodeOp">{</span>								<span class="docuCodeComment">//two statements in else part: curly brackets needed</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"damn <span class="docuCodeOp">:</span><span class="docuCodeOp">(</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"i is less or equal to j"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>Note that GSL also supports <a href="c3.html#14">The Conditional Expression Operators ?:</a></p><div class="docuSubCapt"><a name="2">4.2 The while Loop</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The while loop executes a statement repeatedly as long as a condition is try. The syntax is the following:
+<div class="docuCode"><span class="docuCodeKeyword">while</span><span class="docuCodeOp">(</span>condition<span class="docuCodeOp">)</span>
+	loopStatement</div>
+&lt;condition&gt; is checked. If it is true, then &lt;loopStatment&gt; is executed. This is done repeatedly as long as &lt;condition&gt; stays true. If &lt;condition&gt; is false from the beginning on, then &lt;loopStatement&gt; is not executed at all.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> 0<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">while</span><span class="docuCodeOp">(</span>i&lt;5<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">" "</span> <span class="docuCodeOp">+</span> i<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	i<span class="docuCodeOp">+</span><span class="docuCodeOp">+</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div>
+This prints " 0 1 2 3 4" to the console.</p><div class="docuSubCapt"><a name="3">4.3 The for Loop</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The syntax is exactly the one from C/JAVA:
+<div class="docuCode"><span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span>init<span class="docuCodeOp">;</span>condition<span class="docuCodeOp">;</span>afterLoop<span class="docuCodeOp">)</span>
+	loopStatement</div>
+The semantics are as following:
+1.) &lt;init&gt; is executed. It commonly contains definitions and initialisations for loop variables.
+2.) &lt;condition&gt; is evaluated. If it is false, then then nothing is done, otherwise go to to 3.)
+3.) &lt;loopStatement&gt; is executed, followed by &lt;afterLoop&gt;.
+4.) Go back to 2.)</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">int</span> i<span class="docuCodeOp">=</span>0<span class="docuCodeOp">;</span>i&lt;5<span class="docuCodeOp">;</span>i<span class="docuCodeOp">+</span><span class="docuCodeOp">+</span><span class="docuCodeOp">)</span> <span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">" "</span> <span class="docuCodeOp">+</span> i<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+This prints " 0 1 2 3 4" to the console.</p><div class="docuSubCapt"><a name="4">4.4 The foreach Loop</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The foreach loop is a very convenient way to iterate over:
+<ul class="docList"><li>the keys of an array</li><li>the members of a struct</li><li>the entries of a comma separated list</li></ul></p>
+
+<p>The syntax is always the same:
+<div class="docuCode"><span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span>iterator<span class="docuCodeOp">:</span> iterateOver<span class="docuCodeOp">)</span>
+	loopStatement</div>
+&lt;iterateOver&gt; is an array/struct/comma separated list over which should be iterated.
+&lt;iterator&gt; is a variable (or a variable declaration) of type string (or int in case of an array). In each loop cycle the next key/entry is assigned to &lt;iterator&gt;. Then, &lt;loopStatement&gt; is evaluated.</p>
+
+<p>Note that the keys over which will be iterated are saved at the first loop pass. So if you alter &lt;iterateOver&gt; inside of the loop by example adding new keys, these new keys won't be iterated over.</p>
+
+<p>If &lt;iterateOver&gt; is null, then the loop will be skipped.</p>
+
+<p><b>Iterating over the keys of an array:</b>
+Arrays can contain int and string keys. If &lt;iterator&gt; is of type string, then the loop will only iterate over the string keys. If &lt;iterator&gt; is of type int, then the loop will only iterate over the int keys.</p>
+
+<p>For integer iterations, the loop will iterate sorted from the lowest to the highest key.
+For string iterations, the loop will iterate in the order in which the keys were inserted into the array.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"a"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>5<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"b"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeOp">-</span>35<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"c"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">int</span> i<span class="docuCodeOp">:</span> a<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span>i<span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+This prints "cab" to the console, since the loop starts with the lowest key (-35).</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"x"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"a"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"xx"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"b"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"xxx"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"c"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> a<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>a<span class="docuCodeOp">[</span>s<span class="docuCodeOp">]</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+This prints "abc" to the console, since the values were inserted into the array in that order.</p>
+
+<p><b>Iterating over members of a struct:</b>
+For structs, the foreach loop only works with a string iterator (since structs contain no members with int keys).
+In each loop cycle, the iterator will be assigned with the name of the next member. You can then access the members using the array syntax (a[ b ]), which also works for structs (See also: <a href="c2.html#8">Interchangeability of Array and Struct Syntax</a>).</p>
+
+<p>The members will be iterated in the order in which they are declared in the struct's definition.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point3D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> z<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+Point3D p <span class="docuCodeOp">=</span> Point3D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+p<span class="docuCodeOp">.</span>x <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>
+p<span class="docuCodeOp">.</span>y <span class="docuCodeOp">=</span> 6<span class="docuCodeOp">;</span>
+p<span class="docuCodeOp">.</span>z <span class="docuCodeOp">=</span> 2<span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> p<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>s <span class="docuCodeOp">+</span> <span class="docuCodeString">" <span class="docuCodeOp">=</span> "</span> <span class="docuCodeOp">+</span> p<span class="docuCodeOp">[</span>s<span class="docuCodeOp">]</span> <span class="docuCodeOp">+</span> <span class="docuCodeString">"<span class="docuCodeOp">;</span> "</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+This prints "x = 5; y = 6; z = 2; " to the console.</p>
+
+<p><b>Iterating over the entries of a comma separated list:</b>
+A comma separated list is a string, in which values are seperated by commas (",").
+Each string can be inserted as &lt;iterateOver&gt; and treated as a comma separated list.</p>
+
+<p>If the input string is empty, then no loop cycle will be executed.
+If the input contains no comma, then one loop cycle with the whole string as iterator will be executed.
+If the input contains commas, then in each cycle the iterator is one part between commas. The commas themself never occur in the iterator. If two commas appear consecutively, then a loop cycle with empty string ("") as iterator will be executed.</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeType">string</span> list1 <span class="docuCodeOp">=</span> <span class="docuCodeString">""</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> list1<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"woot"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+Won't output anything since list1 is empty</p>
+
+<p><div class="docuCode"><span class="docuCodeType">string</span> list1 <span class="docuCodeOp">=</span> <span class="docuCodeString">"foobar"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> list1<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"woot"</span> <span class="docuCodeOp">+</span> s <span class="docuCodeOp">+</span> <span class="docuCodeString">" "</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+Will output "wootfoobar ", loop body executed once.</p>
+
+<p><div class="docuCode"><span class="docuCodeType">string</span> list1 <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeOp">,</span>foo<span class="docuCodeOp">,</span><span class="docuCodeOp">,</span>bar"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> list1<span class="docuCodeOp">)</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"woot"</span> <span class="docuCodeOp">+</span> s <span class="docuCodeOp">+</span> <span class="docuCodeString">" "</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+Will output "woot wootfoo woot wootbar ", loop body executed four times.</p><div class="docuSubCapt"><a name="5">4.5 break</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The statement "break;" can be used, to leave a loop (for, foreach, while) immediately.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> list1 <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeOp">,</span>foo<span class="docuCodeOp">,</span><span class="docuCodeOp">,</span>bar"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> list1<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"woot"</span> <span class="docuCodeOp">+</span> s <span class="docuCodeOp">+</span> <span class="docuCodeString">" "</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	<span class="docuCodeKeyword">break</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div>
+will only ouput "woot " since the loop is left after the first execution.</p><div class="docuSubCapt"><a name="6">4.6 continue</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The statement "continue;" can be used in any loop, to skip the remaining actions in the loop body and return back to the loop head, starting the next loop cycle.
+In for loops: &lt;afterLoop&gt; is executed, then the condition is rechecked. If it is true the next cycle starts.
+In while loops: the condition is rechecked, if it is still true the next cycle starts.
+In foreach loops: The next key/entry is loaded to the iterator and the next cycle starts.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">string</span> list1 <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeOp">,</span>foo<span class="docuCodeOp">,</span><span class="docuCodeOp">,</span>bar"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> list1<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>s <span class="docuCodeOp">=</span><span class="docuCodeOp">=</span> <span class="docuCodeString">""</span><span class="docuCodeOp">)</span> <span class="docuCodeKeyword">continue</span><span class="docuCodeOp">;</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"woot"</span> <span class="docuCodeOp">+</span> s <span class="docuCodeOp">+</span> <span class="docuCodeString">" "</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div>
+will only ouput "wootfoo wootbar " since all cycles where s equals "" are skipped.</p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c5.html">NEXT CHAPTER</a>
+	 | <a href="c3.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

@@ -1,0 +1,103 @@
+/**
+*	This library contains functions for in-/output from/to external text files
+*
+*	Note that null termination is used for reading strings
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*
+*/
+
+typedef IOHandler extends object;	//An IO Handler, either a reader or a writer
+typedef Writer extends IOHandler;	//A writer, that writes to a specified file
+typedef Reader extends IOHandler;	//A reader that reads from a specified file
+
+global Reader IO_lastReader = null;	//The reader, reading from the last opened file
+global Writer IO_lastWriter = null;	//The writer, writing to the last opened file
+
+/**
+*	Closes an in-/output writer
+*/
+native void closeFile(IOHandler toClose);
+
+/**
+*	opens the file <fileName> for write purposes and returns a Writer to it.
+*	If the file doesn't exist it will be created
+*	If <append> is true, then the Writer will append to the file,
+*	if not, then the file will be cleared and the Writer will start from the beginning
+*/
+Writer openFileWrite(string fileName,bool append){
+	IO_lastWriter = trap("openFileWrite");
+	return IO_lastWriter;
+}
+
+/**
+*	Opens the file <fileName> for reading and returns a Reader to it.
+*/
+Reader openFileRead(string fileName){
+	IO_lastReader = trap("openFileRead");
+	return IO_lastReader;
+}
+
+/**
+*	Writes the string <toWrite> to the Writer <w>
+*/
+native void write(Writer w, string toWrite);
+
+
+/**
+*	Writes the string <message> to the Writer <w> and terminates it with a null char "\0"
+*/
+void writeString(Writer w, string message){
+	write(w,message + "\0");
+}
+
+/**
+*	Writes to the last opened file
+*/
+void write(string toWrite){
+	if(IO_lastWriter == null) fail("Cannot write, no file opened yet");
+	write(IO_lastWriter,toWrite);
+}
+
+/**
+*	Writes to the last opened file with null termination
+*/
+void writeString(string message){
+	if(_lastOpenedFile == null) fail("Cannot write, no file opened yet");
+	write(IO_lastWriter,message + "\0",true);
+}
+
+
+/**
+*	Reads a string from Reader <r>. Reads until it finds a "\0"  char (or the file's end)  and returns the string without this char
+*	If the file's end is reached null will be returned
+*/
+native string readString(Reader r);
+
+/**
+*	Reads a null terminated string from the last opened file
+*/
+string readString(){
+	if(IO_lastReader == null) fail("Cannot read, no file opened yet");
+	return readString(IO_lastReader);
+}
+
+/**
+*	Copies a file <src> to a destination <dest>. If the destination file already exists an error will be raised unless <overwrite> is set
+*/
+native void copyFile(string src, string dest,bool overwrite);
+
+/**
+*	GSL Archive handling
+*/
+native void createGSLArchive(string archivePath,bool overwrite);
+native void addFileToGSLArchive(string archivePath,string filePath,string nameInArchive);
+
+string getFileFolder(string fileName){
+	return find(fileName,"(.*)(\\/|\\\\)[^/\\\\]+").groups[1];
+}

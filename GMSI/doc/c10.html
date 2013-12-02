@@ -1,0 +1,164 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c9.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">10. Working with Object Editor Data</div></p>
+
+<p>I think most people will use GMSI to alter Object Editor data, like creating tooltips, setting the Hitpoints of creepwaves for Tower Defenses, enumerating the units in their point value, setting the button positions of buildings sorted by their cost and such stuff. In addition, there are some things you should know when working with such data.So I grant a whole section just for Object Editor Data.</p><div class="docuSubCapt"><a name="1">10.1 Loading all objects or just the changed ones?</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>I just want to remember you, that you have the option to load all objects or only the ones that contain changes (pink names in the Object Editor). By default all objects are loaded but you can use the extended loadMap function to just load changed objects. See: <a href="c9.html#3">Loading and Saving Maps with wc3MapIO.gsl</a></p>
+
+<p>If you don't load all objects, you CANNOT access details of not loaded objects. However, if your map only uses changed stuff, then you can do it, since you will hopefully never come into a situation where you have to read from (or write to) unchanged objects.</p><div class="docuSubCapt"><a name="2">10.2 How are objects stored?</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>As you can see in the definitions there is:
+<div class="docuCode"><span class="docuCodeType">array</span>&lt;Wc3obj&gt; 	objects 	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The World Editor objects of this map (unis, abilities,...)</span></div>
+in the map's definition.</p>
+
+<p>This is an array that is restricted to the type Wc3Obj. This array contains all Object Editor objects.
+Lets see the definition for this type and its subtypes:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Wc3obj <span class="docuCodeKeyword">extends</span> <span class="docuCodeType">array</span>&lt;<span class="docuCodeType">string</span><span class="docuCodeOp">,</span><span class="docuCodeType">float</span><span class="docuCodeOp">,</span><span class="docuCodeType">int</span>&gt;<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//A wc3 object editor object</span>
+<span class="docuCodeKeyword">typedef</span> Ability <span class="docuCodeKeyword">extends</span>	Wc3obj<span class="docuCodeOp">;</span>	
+<span class="docuCodeKeyword">typedef</span> Unit <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Doodad <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Destructable <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Upgr <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Item <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Buff <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span></div>
+So as we can see a Wc3obj is just an array that is restricted to the types string, int and float, since these are the only three types that Object Editor fields can contain. Note that booleans in the Object Editor are just ints with 1 = true and 0 = false.
+Next thing we see is that there are 7 types derived from Wc3obj. These are the actual types of Object Editor objects. So a Unit in the OE is stored as type Unit in the array, an Ability in the OE is stored as type Ability in the array and so on.</p>
+
+<p>For the index in the objects array the Object ID is used. This is the string that you see when using "show raw values" in your Object Editor.
+So, for example the peasant has the index "hpea". You can use <a href="c2.html#8">struct and array syntax</a> for adressing objects (like in all arrays with string keys). For iterating over objects using the <a href="c4.html#4">foreach loop</a>, you will have to use array syntax, in all other cases, struct syntax looks more natural, beautiful and is easier to understand (at least I think so).</p>
+
+<p>Some examples:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+Wc3Object peasant <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">;</span>  	<span class="docuCodeComment">//The peasant with struct syntax</span>
+peasant <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">[</span><span class="docuCodeString">"hpea"</span><span class="docuCodeOp">]</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//The peasant with array syntax. (ugly^^)</span></div></p><div class="docuSubCapt"><a name="3">10.3 Accessing Object Attributes</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p><b>All attributes an Object Editor object has are stored in it with their raw names (the names they have when you use "show raw values" in your Object Editor).</b>
+So, as an example we can access the name of our peasant by checking how this field is raw named in the OE. As we ca&lt;n lookup there, it is "Name" (Warning: Case sensitive! Some OE values are written with a starting capital letter, others are not). So we can for example set the peasants name with:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">.</span>Name <span class="docuCodeOp">=</span> <span class="docuCodeString">"Our peasant"</span><span class="docuCodeOp">;</span>  	<span class="docuCodeComment">//The peasant with struct syntax</span>
+map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">[</span><span class="docuCodeString">"hpea"</span><span class="docuCodeOp">]</span><span class="docuCodeOp">[</span><span class="docuCodeString">"Name"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"Our peasant"</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The peasant with array syntax. (ugly^^)</span>
+map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">[</span><span class="docuCodeString">"hpea"</span><span class="docuCodeOp">]</span><span class="docuCodeOp">.</span>name <span class="docuCodeOp">=</span> <span class="docuCodeString">"Our peasant"</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Of course you can mix struct and array syntax</span></div>
+I use the different syntaxes here again, that you get used to both, because you will see both somewhere and should know what they mean.</p><div class="docuSubCapt"><a name="4">10.4 Double Attributes</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>As said in the last chapter object attributes are accessed using the raw names.
+However, there are some attributes in the Object Editor, that appear twice. The most prominent Example is the Buttonposition. If you check the raw values for x and y Buttonposition, you will see that they re both named "Buttonpos". GMSI, has to know which one you mean if you access "Buttonpos", so it was made like this:
+The first value is just called as it is called in the Editor, so "Buttonpos" will refer to the X button position. All other appearances are numerated starting with 1, so "Buttonpos1" would be the Y buttonposition. Example:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">.</span>Buttonpos <span class="docuCodeOp">=</span> 1<span class="docuCodeOp">;</span>  		<span class="docuCodeComment">//alter the x buttonpos of the peasant</span>
+map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">.</span>Buttonpos1 <span class="docuCodeOp">=</span> 1<span class="docuCodeOp">;</span>		<span class="docuCodeComment">//alter the y buttonpos of the peasant</span></div>
+I know that this syntax is very dissatisfying. Maybe I will code something new some day. However, if you are very familiar with the file format of these files, this notation is consistent. See this example, that you know what I mean:
+Check a three level upgrade in your Object Editor. As you can see the field "Requires" is enumerated like explained above. However, "Art" isn't enumerated like that. Instead, it is just three times the word "Art". So GMSI enumerates "Art" just like "Requires". This adds some consistency, where Blizzard has none.</p>
+
+<p>Here is a (maybe incomplete) list of these "double attributes":</p>
+
+<p><b>General:</b>
+	<ul class="docList"><li>xxxButtonpos (all Buttonpositions "Buttonpos", "UnButtonpos","Researchbuttonpos"...)</li></ul>
+<b>Units:</b>
+	<ul class="docList"><li>Missilearc</li><li>Missileart</li><li>MissileHoming</li><li>Missilespeed</li></ul>
+<b>Abilities:</b>
+	<ul class="docList"><li>Tip</li><li>Untip</li><li>Ubertip</li><li>Unubertip</li></ul>
+<b>Upgrades:</b>
+	<ul class="docList"><li>Tip</li><li>Ubertip</li><li>Art</li><li>Hotkey</li><li>Name</li><li>EditorSuffix</li></ul></p><div class="docuSubCapt"><a name="5">10.5 Getting the Type of an Object</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Since all objects are put into one array, you might want to know if the Wc3obj you have is a Unit or an Ability or whatever.
+This can be checked, since the objects are of different types, remember the type declaration:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Ability <span class="docuCodeKeyword">extends</span>	Wc3obj<span class="docuCodeOp">;</span>	
+<span class="docuCodeKeyword">typedef</span> Unit <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Doodad <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Destructable <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Upgr <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Item <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">typedef</span> Buff <span class="docuCodeKeyword">extends</span> Wc3obj<span class="docuCodeOp">;</span></div>
+So, we can use the <a href="c3.html#11">instanceof operator</a> to check if an object is of the type we want.</p>
+
+<p>Example:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+Wc3Object peasant <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>peasant <span class="docuCodeKeyword">instanceof</span> Unit<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"The peasant is a unit"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Will be displayed since the peasant is of type Unit.</span>
+<span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="6">10.6 Getting & Setting Additional Object Information</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>There is some information besides of type and attributes of an array, you might want to get or even alter.
+The library "objects.gsl" in the lib folder contains many functions for Object Editor data handling.
+Check the library for all functions, the comments above each function tell you exactly how to use it.</p>
+
+<p>Here are some examples of functions in the library:</p>
+
+<p>Getting object IDs:
+<div class="docuCode"><span class="docuCodeType">string</span> getObjectId<span class="docuCodeOp">(</span>Wc3obj obj<span class="docuCodeOp">)</span> <span class="docuCodeComment">//gets the ID of this object</span>
+<span class="docuCodeType">string</span> getBaseId<span class="docuCodeOp">(</span>Wc3obj obj<span class="docuCodeOp">)</span> <span class="docuCodeComment">//gets the ID of the object this object is derived from</span></div></p>
+
+<p>Checking object IDs:
+<div class="docuCode"><span class="docuCodeType">bool</span> isIdValid<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> objId<span class="docuCodeOp">)</span> <span class="docuCodeComment">//checks if an object ID is valid</span>
+<span class="docuCodeType">bool</span> isIdPredefined<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> objId<span class="docuCodeOp">)</span> <span class="docuCodeComment">//checks if an object ID belongs to a predefined object</span>
+<span class="docuCodeType">bool</span> isIdCustom<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> objId<span class="docuCodeOp">)</span> <span class="docuCodeComment">//checks if an object ID belongs to a user defined object</span></div></p>
+
+<p>Creating and altering objects:
+<div class="docuCode"><span class="docuCodeType">object</span> setParentObject<span class="docuCodeOp">(</span>Wc3obj toChange<span class="docuCodeOp">,</span> Wc3obj newId<span class="docuCodeOp">,</span> <span class="docuCodeType">bool</span> overwrite<span class="docuCodeOp">)</span> <span class="docuCodeComment">//sets the object &lt;toChange&gt; is derived from</span>
+Wc3obj createObject <span class="docuCodeOp">(</span>Map mapHandle<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> baseId<span class="docuCodeOp">)</span> <span class="docuCodeComment">//creates an object, which is derived from &lt;baseId&gt; and returns it</span></div></p>
+
+<p>Example:
+We want to check if an object is a user defined oject:
+<div class="docuCode">Wc3obj obj <span class="docuCodeOp">=</span> <span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>isIdCustom<span class="docuCodeOp">(</span>getObjectId<span class="docuCodeOp">(</span>obj<span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"This <span class="docuCodeType">object</span> is custom<span class="docuCodeOp">!</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>Note: instead of using the function getObjectId(Wc3obj), you can also use the string you got from iterating. However, if you have only the object, you need getObjectId.</p>
+
+<p>There are some other things you can do, without using the library:</p>
+
+<p><b>Changing the ID of an object</b></p>
+
+<p>You can change the ID of an object by just entering it into another entry in the map.objects array. However, you then have to <a href="c3.html#10">unset</a> the
+the old entry or the unit will be in the map twice.
+Example:
+<div class="docuCode">map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>h123 <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>h001<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Sets the object with ID "h001" also as object with ID "h123"</span>
+<span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>h001<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>				<span class="docuCodeComment">//Removes the old link, now the object has only the new ID "h123"</span></div>
+Note that the getObjectId function will always get the ID of the object when it was loaded. So if you "rename" objects like that, you cannot use the getObjectId function for them anymore, because it will still return the old value.</p>
+
+<p><b>Checking if an object contains any changes</b></p>
+
+<p>Sometimes you want to know if an object is "changed", i.e. if it contains any attribute changes and is showed pink in the Object Editor. This is very simple. Just check the [ref=]size[/ref] of the object. If it is 0, then the object has no changes, if it is &gt; 0 the object contains changes.</p>
+
+<p>Example: checking if the peasant has changes:
+<div class="docuCode"><span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span><span class="docuCodeKeyword">size</span><span class="docuCodeOp">(</span>map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">)</span>&gt;0<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"The peaseant has changed attributes<span class="docuCodeOp">!</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p><b>Deleting an object</b></p>
+
+<p>This is simple and works for everything, not only for objects, but also for triggers, rects,... . If you want to delete something from your map, just <a href="c3.html#10">unset</a> it. Then it is removed from the struct/array and not saved when the map is saved.
+<div class="docuCode"><span class="docuCodeKeyword">unset</span><span class="docuCodeOp">(</span>map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>h001<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Deletes the unit with ID h001 from the map</span></div></p><div class="docuSubCapt"><a name="7">10.7 Iterating Over Arbitrary Sets of Objects</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The basis for the iteration over Object Editor attributes is of course the <a href="c4.html#4">foreach loop</a>, since it allows you to iterate over arrays like the "map.objects" array.
+Since you more or less never want to iterate over all objects of your map, you should use the information you gathered in the previous chapters to filter the objects
+returned by the foreach loop.
+You can do for example these restrictions:
+<ul class="docList"><li>Picking only Objects of one type (like Units) by using the instanceof operator.</li><li>Picking only user defined objects using functions like isIdCustom</li><li>Picking only objects where a current attribute matches a condition, like only units of the Undead race</li><li>...</li></ul></p>
+
+<p>Example: Iterating over all Units, which are custom and of the undead race:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> s<span class="docuCodeOp">:</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	Wc3obj obj <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">[</span>s<span class="docuCodeOp">]</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Retrieving the object</span>
+	<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span><span class="docuCodeOp">!</span><span class="docuCodeOp">(</span>obj <span class="docuCodeKeyword">instanceof</span> Unit<span class="docuCodeOp">)</span><span class="docuCodeOp">)</span> <span class="docuCodeKeyword">continue</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Object is no unit? then skip!</span>
+	<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>isIdPredefined<span class="docuCodeOp">(</span>s<span class="docuCodeOp">)</span><span class="docuCodeOp">)</span> <span class="docuCodeKeyword">continue</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Object is not custom but predefined? then skip!</span>
+	<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span>obj<span class="docuCodeOp">.</span>race <span class="docuCodeOp">!</span><span class="docuCodeOp">=</span> <span class="docuCodeString">"undead"</span><span class="docuCodeOp">)</span> <span class="docuCodeKeyword">continue</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Race is not undead? then skip!</span>
+	
+	<span class="docuCodeComment">//Do something, for example:</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"The <span class="docuCodeType">object</span> with ID "</span> <span class="docuCodeOp">+</span> s <span class="docuCodeOp">+</span> <span class="docuCodeString">" is a custom unit belonging to the undead race"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="8">10.8 Links Between Objects</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>There are some links between objects in the Object Editor. For example a unit has an ability list or a trained units list. For many different purposes you want to access these. An example would be tooltip creation: You want to add all ability names to the tooltip of the unit that has them.</p>
+
+<p>This is a very easy job. If you look at the raw value of these ability- / unit- / effect- / whatever- lists, you see that they just contain the IDs of the linked objects seperated by commas. As you should still remember you can iterate over these comma separated lists with the <a href="c4.html#4">foreach loop</a> just like iterating over the string keys of an array.
+So all you have to do then, is retrieving the object with that ID and using its values for whatever you need them.</p>
+
+<p>Here is an example:
+We want to output the names of all abilities of the peasant:
+<div class="docuCode">Map map <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">string</span> list <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">.</span>abilList<span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Retrieving the abil list of the peasant</span>
+ 
+<span class="docuCodeKeyword">for</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> currentID<span class="docuCodeOp">:</span> list<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>				<span class="docuCodeComment">//Iteration over all IDs in the list</span>
+	Wc3obj curAbil <span class="docuCodeOp">=</span> map<span class="docuCodeOp">.</span>objects<span class="docuCodeOp">[</span>currentID<span class="docuCodeOp">]</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Retrieving the ability that belongs to the ID</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"Here is an ability of the peasant<span class="docuCodeOp">:</span>"</span> <span class="docuCodeOp">+</span> curAbil<span class="docuCodeOp">.</span>Name <span class="docuCodeOp">+</span> <span class="docuCodeString">"<span class="docuCodeOp">\</span>n"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//Outputting the name</span>
+<span class="docuCodeOp">}</span></div></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c9.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

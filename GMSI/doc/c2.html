@@ -1,0 +1,220 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c3.html">NEXT CHAPTER</a>
+	 | <a href="c1.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">2. Data Types and Variables</div></p>
+
+<p>GSL has 9 basic data types. In addition, new user defined data types can be created using the <a href="c7.html#1"> typedef / extends syntax</a>.</p><div class="docuSubCapt"><a name="1">2.1 Basic Data Types</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>GSL has 9 basic data types:</p>
+
+<p><ul class="docList"><li><b>int:</b> An integer number like 42</li><li><b>float:</b> A floating point number like 3.1415</li><li><b>bool:</b> A boolean value like true or false</li><li><b>string:</b> A string like "foobar"</li><li><b>struct:</b> A struct type</li><li><b>array:</b> An associative array</li><li><b>object:</b> An internal java object</li><li><b>var:</b> Variable type, can contain any data</li><li><b>void:</b> Nothing, can only be used as function return type</li></ul></p>
+
+<p>GSL is case insensitive for the first letter of the basic variable types. So Int is the same as int for example, so people can adapt faster from their language of choice. However, GSL is not case insensitive for self defined types. As a coding convention, self defined types should start with an upper case letter.</p>
+
+<p>Note about the object type: It is used by some system calls. You cannot create object instances with a constructor, you can only get any by calling a system call that returns an object (or some type derived from it) and they are just useful to get handed back to other system calls.</p>
+
+<p>Struct and array are the storage types in GSL which can store other variables.
+Note that array and struct types are initialized with null, not a new array/struct. So if you want an array/struct variable to contain an instance of the type, you have to assign a constructor to it first (see next section).</p><div class="docuSubCapt"><a name="2">2.2 Literals</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The literals in GSL are more or less like the literals in most other languages:</p>
+
+<p>Following literals exist for the data types:</p>
+
+<p><ul class="docList"><li><b>int:</b> any integer number, like 534, -5</li><li><b>float:</b> any number with a point in it like 9.34, .45, 234.
+(Note that exponent notations like 34E23 and hex or octal notations like 0x4B3A or 034 are not supported yet)</li><li><b>string:</b> anything between double quotation marks is considered a string literal.
+Inside of string literals you can use the following escape sequences:
+\n New line
+\t Tab
+\\ A Backslash
+\" A quotation mark</li><li><b>bool:</b> The words true and false are considered boolean literals</li></ul></p><div class="docuSubCapt"><a name="3">2.3 Declaring Variables</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Each variable you want to use in GSL has to be declared before it can be used.
+In GSL, there exist two different types of variables globals and locals.</p>
+
+<p>The syntax of a local declaration is like that
+<div class="docuCode">TYPENAME VARIABLENAME<span class="docuCodeOp">;</span></div>
+This declares the local variable &lt;VARIABLENAME&gt; of type &lt;TYPENAME&gt;.
+So if you want to declare a new local variable of type int, named foo, you write:
+<div class="docuCode"><span class="docuCodeType">int</span> foo<span class="docuCodeOp">;</span></div></p>
+
+<p>Local variables are only visible in the block where they were defined. If you want a variable to be visible in your whole script you have to declare it global by writing the keyword global in front of its declaration:
+<div class="docuCode"><span class="docuCodeKeyword">global</span> TYPENAME VARIABLENAME<span class="docuCodeOp">;</span></div>
+These variables will be visible everywhere, even in functions.</p>
+
+<p>There may be no two local or global variables with the same name visible at one time. However, there may be a global variable with the same name as a local variable. In this case, the local variable will override the global.</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeKeyword">global</span> <span class="docuCodeType">int</span> i<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Possible, local and global with same name allowed</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeType">int</span> i<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Not allowed: Two locals/globals with the same name</span></div></p>
+
+<p>Variable can also be initialized explicitly upon declaration, which this syntax:
+<div class="docuCode">TYPENAME VARIABLENAME <span class="docuCodeOp">=</span> INITIAL_VALUE<span class="docuCodeOp">;</span></div>
+So if you want to declare a new variable of type int, named foo and assign the value 10 to it, you write:
+<div class="docuCode"><span class="docuCodeType">int</span> foo <span class="docuCodeOp">=</span> 10<span class="docuCodeOp">;</span></div></p><div class="docuSubCapt"><a name="4">2.4 Initial Values</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>If a variable isn't initalized explicitly, it is initialized with the default initial value
+of the given variable type.
+The inital values are the following:</p>
+
+<p><ul class="docList"><li><b>int:</b> 0</li><li><b>float:</b> 0.0</li><li><b>bool:</b> false</li><li><b>string:</b> ""</li><li><b>struct:</b> null</li><li><b>array:</b> null</li><li><b>object:</b> null</li><li><b>var:</b> null</li></ul></p><div class="docuSubCapt"><a name="5">2.5 Constructors</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>You can get a new instance of every data type (also self defined ones!) except var and object by calling TYPENAME()</p>
+
+<p>The constructor of the 4 basic types int,float,bool,string just returns their initial value as stated in 4.4.</p>
+
+<p>Concerning arrays, the constructor will give you a new array, with no keys/values assigned yet.</p>
+
+<p>Concerning struct types, the constructor will generate a new struct, initialize all members with their initial values and
+give you a reference to that struct.</p>
+
+<p>Objects and Vars cannot be instanciated using a constructor because:
+objects may only be generated by internal system calls, not the script itself, since they represent internal JAVA objects
+the type var is a variable type, it can hold any other type but cannot be instanciated itself.</p>
+
+<p>here are some examples for the usage of a constructor
+<div class="docuCode"><span class="docuCodeType">int</span> foo <span class="docuCodeOp">=</span> <span class="docuCodeType">int</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//foo is 0 now, not very useful, since you could also write int foo = 0;</span>
+<span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//a contains a new, empty array now.</span></div></p><div class="docuSubCapt"><a name="6">2.6 The Type struct</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Struct denotes a structure type, as known from other languages like C. A structure is a variable that contains several other
+variables called members. The name, type and the initial value of these members is defined in the struct's definition.</p>
+
+<p>Structs are defined like that:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> TYPENAME <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	TYPE1 NAME1<span class="docuCodeOp">;</span>
+	TYPE2 NAME2 <span class="docuCodeOp">=</span> INIT_VALUE<span class="docuCodeOp">;</span>
+	<span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>As you can see the definition starts with the keyword "typedef" which always denotes a new type definition. Typedef is followed by the desired name of your struct type &lt;TYPENAME&gt;. After that, the word struct follows. Then, there is a list of
+member declarations, surrounded with curly braces. Each member must have a name and a type and can have an initial value.</p>
+
+<p>When a struct is created using the constructor TYPENAME() all members are initialized with the given values or with the default values.</p>
+
+<p>As you see you have to define structs by yourself. The type struct itself also denotes a structure, but the one with no members. However, all self defined structs are considered to be extended from struct. So you can put any self defined array into a variable of type struct. The constructor struct() will give you an instance of this type. However this instance ain't usesful since it has no members and thus can contain no data at all.</p>
+
+<p>Normally struct members are accessed by using the . operator like this:
+<div class="docuCode">STRUCTVAR<span class="docuCodeOp">.</span>MEMBERNAME</div></p>
+
+<p>Here is an example of the usage of a self defined struct:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span> <span class="docuCodeComment">//Define the struct point as a 2 dimensional coordinate</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+Point2D myPoint <span class="docuCodeOp">=</span> Point2D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//Create a new point</span>
+myPoint<span class="docuCodeOp">.</span>x <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>				 <span class="docuCodeComment">//Assign 5 to the x coordinate</span>
+myPoint<span class="docuCodeOp">.</span>y <span class="docuCodeOp">=</span> 7<span class="docuCodeOp">;</span>				 <span class="docuCodeComment">//Assign 7 to the x coordinate</span></div></p><div class="docuSubCapt"><a name="7">2.7 The Type array</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The type array in GSL denotes an associative array (also called hash), which can hold key value pairs.
+The keys can either be of type int and/or of type string, the values can be of any type (even different types in one array are allowed).</p>
+
+<p>An array is created by calling the constructor array(). A freshly created array has no key value pairs yet.
+You can access the values using the array index syntax (like in most common languagues):
+<div class="docuCode">ARRAYVAR<span class="docuCodeOp">[</span>KEY<span class="docuCodeOp">]</span></div></p>
+
+<p>Here is an example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Declares the array variable a and assigns a new array to it</span>
+ 
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"foo"</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Saves the string value "foo" under the int key 0</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"bar"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeKeyword">true</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Saves the bool value true under the string key "bar"</span>
+a<span class="docuCodeOp">[</span>45<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> 34<span class="docuCodeOp">;</span>			<span class="docuCodeComment">//Saves the int value 34 under the int key 45</span>
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"xx"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Saves a new array under the string key "xx"</span></div></p><div class="docuSubCapt"><a name="8">2.8 Interchangeability of Array and Struct Syntax</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Arrays written in the last chapters, arrays entries are normally accessed using the a[ b ] syntax and struct members using the a.b Syntax. However, in GSL you can exchange both.
+So a.b is semantically equivalent with a["b"]. This is useful to iterate over struct members using the foreach loop. The [] syntax is generally mightier than the . syntax since it
+allows choosing the member during runtime by using string variables as indices. </p>
+
+<p>But note that this works only for string keys, not int keys ,so a[0] can't be replaced by a.0 .
+Examples:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+Point2D myPoint <span class="docuCodeOp">=</span> Point2D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span><span class="docuCodeComment">//Create a new point</span>
+myPoint<span class="docuCodeOp">.</span>x <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>				<span class="docuCodeComment">//Assign 5 to the x coordinate</span>
+myPoint<span class="docuCodeOp">[</span><span class="docuCodeString">"x"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> 5<span class="docuCodeOp">;</span>			<span class="docuCodeComment">//Same as the line above</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+ 
+a<span class="docuCodeOp">[</span><span class="docuCodeString">"foo"</span><span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//Assigns "bar" to the key "foo"</span>
+a<span class="docuCodeOp">.</span>foo <span class="docuCodeOp">=</span> <span class="docuCodeString">"bar"</span><span class="docuCodeOp">;</span>	  <span class="docuCodeComment">//Same as above</span></div></p><div class="docuSubCapt"><a name="9">2.9 Typecasting</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Typecasting has to be done, when a variable of type a has to be assigned to a variable of type b or two values of different types are put together with a binary operator.</p>
+
+<p>Implicit typecasting is done in GSL for the following types:</p>
+
+<p>Int can be cast implicitly to float.</p>
+
+<p>Everything can be cast implicitly to string. This is a very useful functionality, since casting structs or arrays to string returns a string that shows all content.
+This is very useful for debugging purposes.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeType">array</span> a <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeString">"foo"</span><span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>3<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> 345<span class="docuCodeOp">;</span>
+a<span class="docuCodeOp">[</span>5<span class="docuCodeOp">]</span> <span class="docuCodeOp">=</span> <span class="docuCodeType">array</span><span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+ 
+<span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> a<span class="docuCodeOp">;</span></div></p>
+
+<p>s now contains now this string:
+<b>
+array(
+  0 =&gt; foo
+  3 =&gt; 345
+  5 =&gt; array() 
+)
+</b></p>
+
+<p>For derived or struct types implicit typecasting is done if a type (child) which is derived from another one (ancestor) is cast to the ancestor type (also called upcasting).
+Since any defined struct is derived from the type struct itself, you can cast every struct type to struct implicitly:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+Point2D myPoint <span class="docuCodeOp">=</span> Point2D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">struct</span> s <span class="docuCodeOp">=</span> myPoint<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Possible since Point2D as a struct type is derived from struct</span></div></p>
+
+<p>If a type can't be casted implicitly to another you can still try to cast it explicitly using the cast operator 
+<div class="docuCode"><span class="docuCodeOp">(</span>TYPENAME<span class="docuCodeOp">)</span>VAR_TO_CAST</div>
+(Exactly the same like in java/c)</p>
+
+<p>These types can be casted explicitly:
+-Everything that can be casted implicitly (of course)
+-Bool can be casted to int or float, which results in 1 / 1.0 for true and 0 / 0.0 for false
+-Int and float can be casted to bool which returns VALUE != 0
+-Float can be casted explicitly to int. The floating point number is then rounded down to the next integer number
+-String can be cast to bool, float and int which result in the string beeing parsed. If the string cannot be parse, it will throw an error
+-Derived types can be cast from ancestor to child type (called downcasting). If the variable isn't of the child type, you will get an error.</p>
+
+<p>Examples:</p>
+
+<p>Number casting:
+<div class="docuCode"><span class="docuCodeType">float</span> f <span class="docuCodeOp">=</span> 2<span class="docuCodeOp">.</span>999<span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">int</span><span class="docuCodeOp">)</span>f<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//i is 2 now</span></div></p>
+
+<p>String casting (parsing):
+<div class="docuCode"><span class="docuCodeType">string</span> s1 <span class="docuCodeOp">=</span> <span class="docuCodeString">"25<span class="docuCodeOp">.</span>34"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">float</span> f <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">float</span><span class="docuCodeOp">)</span>s1<span class="docuCodeOp">;</span> <span class="docuCodeComment">//f is 25.34 now</span>
+ 
+<span class="docuCodeType">string</span> s2 <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeKeyword">true</span>"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">bool</span> b <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">bool</span><span class="docuCodeOp">)</span>s2<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//b is true now</span>
+ 
+<span class="docuCodeType">string</span> s <span class="docuCodeOp">=</span> <span class="docuCodeString">"2z4"</span><span class="docuCodeOp">;</span>
+<span class="docuCodeType">int</span> i <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeType">int</span><span class="docuCodeOp">)</span>s<span class="docuCodeOp">;</span> <span class="docuCodeComment">//Error, "2z4" is no integer representation</span></div></p>
+
+<p>Up- and Downcasting:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeKeyword">typedef</span> Size <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> width<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> height<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeType">struct</span> s <span class="docuCodeOp">=</span> Size<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Implicit "upcast"</span>
+Size t <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>Size<span class="docuCodeOp">)</span>s<span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Explicit "downcast"</span>
+Point2D <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span>Point2D<span class="docuCodeOp">)</span>s<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Error: the content of s is of type Size, not of Point2D thus cannot be cast</span></div></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c3.html">NEXT CHAPTER</a>
+	 | <a href="c1.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

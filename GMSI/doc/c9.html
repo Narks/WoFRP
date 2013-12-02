@@ -1,0 +1,243 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c10.html">NEXT CHAPTER</a>
+	 | <a href="c8.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">9. The GMSI API</div></p>
+
+<p>This section will tell you which functionalities GMSI has for doing your favorite task (especially altering maps ;) ). However you should first learn basic GSL Syntax, since this is just a reference for some GSL Libraries that are provided by GMSI. If you don't know the GSL Syntax you won't understand anything here!</p><div class="docuSubCapt"><a name="1">9.1 General Usage of Libraries</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Libraries are gsl files which contain gsl functions and system calls (calls to JAVA functions) which offer the functionalities you need. Libraries are stored in the script/lib folder and in the script/autoexec folder.</p>
+
+<p>All libraries in the autoexec folder are common libraries which many scripts need. So, the program executes all these libraries before any script file. This means for you, that you don't have to include them, if you want to use their functionalities.</p>
+
+<p>The libraries in the script/lib folder have to be included before you can use any of their functions (See: <a href="c6.html#6">including functions</a>).</p>
+
+<p>The folders script/lib and script are on the autolookup path of GMSI. So if you want to include any files in the folder, you can just write their names, you dont have to prefix them with the folders.</p>
+
+<p>Example:
+<div class="docuCode"><span class="docuCodeKeyword">include</span><span class="docuCodeOp">(</span><span class="docuCodeString">"dialog<span class="docuCodeOp">.</span>gsl"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+will include dialog.gsl which is located in the script/lib folder.</p>
+
+<p>Note that the folder where the script to execute was is also on the lookup path, so no matter where you script is, if you store libraries it needs in the same folder, the script folder or the script/lib folder, include will find them.</p><div class="docuSubCapt"><a name="2">9.2 The Type Map and Contained Types</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>The type Map is a struct which is defined in the library wc3MapDefinitions.gsl. This library, which is included automatically defines ALL necessary data types that a map contains.</p>
+
+<p>When a map is loaded, the loadMap function returns an instance of type Map. You can then use alter this struct. If you then hand it to the function saveMap, it will save your map to the desired path with the changes you have made.</p>
+
+<p>If you want to alter a particular part of the map, you should check the library's source. It is commented well, you will find what you search for very fast.</p>
+
+<p>Let's look at the definition of the type Map:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Map <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">string</span>			fileName	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//The name of the map file, when it was opened</span>
+	InfoSection 	info		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//General map information</span>
+	EnvSection		environment	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The environment (the tileset and the specific tiles)</span>
+	<span class="docuCodeType">object</span> 			mapHandle	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//An internal handle for loading / saving / deleting files from the maps archive. DON'T CHANGE or you won't be able to load or save files from this map anymore!</span>
+	<span class="docuCodeType">array</span>&lt;Wc3obj&gt; 	objects 	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The World Editor objects of this map (unis, abilities,...)</span>
+	PlacedObjects	placed 		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The placed units, items, destructables and trees on the map</span>
+	ScriptSection 	script 		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The triggers of this map (including gui trigger, comments and JASS)</span>
+	<span class="docuCodeType">array</span>&lt;Rect&gt;		rects		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//The rects (regions) of this map</span>
+	<span class="docuCodeType">array</span>&lt;Sound&gt;	sounds		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//The sounds of this map</span>
+	<span class="docuCodeType">array</span>&lt;Import&gt;	imports		<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//The list of imported files</span>
+	InternSection	internal	<span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//Internal stuff, which is only there because gosi doesn't parse really the whole map yet</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>As you can see, GMSI devides the map in different sections which are again struct types defined in the wc3MapDefinitions.gsl. So, if you want to alter something concerning triggers, you should probably check the definition of the type ScriptSection, since this is the place where the triggers are put.</p>
+
+<p>Here is an overview of the sections and for what you can use them:</p>
+
+<p><ul class="docList"><li><b>info:</b>
+The info section of the map contains all general information, like the map's name, author, player and force settings. To cut long things short: This section contains almost everything you can alter using the "Scenario" tab in your World Editor (and some other stuff).</li><li><b>environment:</b>
+This section contains the environment of the map. That is the heightmap, texturemap and tileset of your map. If you want to change terrain height, exchange textures or paint another texture somewhere on your map, you will need this section. However, this section is the only one which isn't loaded by default, since it can get damn big because every tile of your map is saved. If you want to alter the environment you have to load the map with the extended syntax (See: <a href="c9.html#3">Loading and Saving Maps with wc3MapIO.gsl</a>).</li><li><b>objects:</b>
+As you can see this is a <a href="c7.html#2">typerestricted array</a> of type WC3Object. WC3Object are Object Editor objects, like Units & Abilities. They are stored in this array using their object editor raw codes as array keys. Example: The peaseant has "hpea" as key. If you want to lookup/alter any object editor values, you are right here.</li><li><b>placed:</b>
+This section contains all doodads, trees, units & items which are placed somewhere on your map. So if you want to add a new forest somewhere on your map, create some items somewhere or add some bushes or playerunits then you will find necessary stuff here.</li><li><b>script:</b>
+This section contains everything that can be altered in the map's trigger editor. So triggers, triggercomments, trigger categories and global variables are stored here. Note that GUI Triggers are not fully supported. You can remove them or change their comment, but you cannot alter the GUI structures. I am sorry for this, but implementing that would be again a big shitload of work. Maybe I will do it some day, but excuse me please until then. And in addition: If you already write your own GSL scripts that alter triggers you should know JASS as well, so altering GUI with GSL should never be a desired task for someone.</li><li><b>rects:</b>
+This array contains all trigger regions (rects) which are defined using the regions layer in the World Editor.</li><li><b>sounds:</b>
+This array contains all sounds defined in the World Edit's sound editor.</li><li><b>imports:</b>
+This array contains all imports from your World Edit's import editor.</li><li><b>internal:</b>
+This section contains all strings that are in the map but not inserted (yet) into any other category. It is just there if you want to check ALL your map's strings for something (like for used import paths). It has readonly functionalty, so anything that you change there will not be taken into the altered map, when saving it (except for the Trigstrs).</li><li><b>filename:</b>
+This is just the map's file name, it can be used for control output but isn't useful for other things. It just stores where you loaded the map from.</li><li><b>mapHandle:</b>
+This is an internal handle that the load/mpq/save engine needs to do stuff with your map. Simple and short: Never ever touch it. Never dare to exchange it, set it to null or even unset it. If you do so, you won't be able to do anything with that Map struct anymore, I promise you!</li></ul></p>
+
+<p>This was just a coarse overview over the sections, you can check the detailed functionalities of the different sections, by checking their definitions in the file, they should be well commented.</p>
+
+<p><b>Debugging tip:</b>
+If you want to check the content of the different sections, use the echo command and just cast the section you want to view to string. You will get all the content displayed on GMSI's console.
+Example:
+<div class="docuCode">Map m <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>m<span class="docuCodeOp">.</span>triggers <span class="docuCodeOp">+</span> <span class="docuCodeString">""</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Lists, the trigger section (concatenation with empty string casts the struct to string)</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>m<span class="docuCodeOp">.</span>triggers<span class="docuCodeOp">.</span>hpea<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Lists the attributes of the peasant</span></div></p><div class="docuSubCapt"><a name="3">9.3 Loading and Saving Maps with wc3MapIO.gsl</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>This library is in the autoexec folder and is auto included. It contains many functions to load and save a map. Here are the most important ones:</p>
+
+<p>The basic function for loading maps:
+<div class="docuCode">Map loadMap<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> mapName<span class="docuCodeOp">)</span></div>
+This loads the map from the path &lt;mapName&gt; and returns a struct that contains it. </p>
+
+<p>All sections are loaded automatically except for the environment section (since this one requires much memory and time to load/save). If you want to load also the environment, you have to use the extended loadMap function (described below).</p>
+
+<p>&lt;mapName&gt; is the path from your GMSI main path to the map. So for maps in the input folder it is "input/mapName.w3x". You can also use the [ref]external variable[/ref] @inputPath to refer to your input folder. This will ensure that your script also works on platforms where the user has changed the input path in the GMSI.ini. So it would be then:
+<div class="docuCode">Map myMap <span class="docuCodeOp">=</span> loadMap<span class="docuCodeOp">(</span><span class="docuCodeOp">@</span>inputPath <span class="docuCodeOp">+</span> <span class="docuCodeString">"<span class="docuCodeOp">\</span><span class="docuCodeOp">\</span>"</span> <span class="docuCodeOp">+</span> <span class="docuCodeString">"myMap<span class="docuCodeOp">.</span>w3x"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div></p>
+
+<p>The extended loadMap function does the same as the normal one, but it offers more freedom in what you want to load and what you don't:
+<div class="docuCode">Map loadMap<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> mapName<span class="docuCodeOp">,</span> <span class="docuCodeType">bool</span> loadEnvironment<span class="docuCodeOp">,</span> <span class="docuCodeType">bool</span> loadUnchangedObjects<span class="docuCodeOp">)</span></div>
+&lt;mapName&gt; is again the map's path. &lt;loadEnvironment&gt; specifies whether to load the environment of the map or not (which is not done by the normal loading function).
+If &lt;loadUnchangedObjects&gt; is true, than all object editor objects will be loaded to your object section. If this is false, then only changed objects will be loaded (such which appear pink in the World Edit's object editor).
+This parameter is set to true in the normal loading function, so ALL objects are loaded by default.</p>
+
+<p>Which advantages may it have to NOT load all objects?
+Well, then the unchanged objects don't appear when you iterate over all objects. Many times you want to change only user defined objects, not the basic ones. Since the number of basic objects is around 3000, your script will run much faster if you only iterate over the changed ones (which are normally less than 3000).
+However if you don't load these objects, you won't be able to access their values!
+So for the most situations, I encourage you to load all objects (this is why it is on by default).</p>
+
+<p>After we have loaded a map and altered it we need a function to save it back to a desired file.
+This does the saveMap function:
+<div class="docuCode">saveMap<span class="docuCodeOp">(</span>Map map<span class="docuCodeOp">,</span><span class="docuCodeType">string</span> outputName<span class="docuCodeOp">)</span></div>
+It takes a Map struct &lt;map&gt; and saves the data contained in it to the Map &lt;outputName&gt; (which is created or overwritten if it already exists).</p>
+
+<p>That is all you have to know to do changes to a map.
+Just load it, alter the sections and save it, that's it.</p><div class="docuSubCapt"><a name="4">9.4 Building Tooltips and Other Macros with macros.gsl</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p><b>Note: This library is only recommended for macroing. If you need pattern matching rather use pattern.gsl, which allows much mightier pattern syntax</b></p>
+
+<p>This library is in the autoexec folder and is auto included. It contains calls to get and apply and pattern matcher and replacer, called "Matcher".</p>
+
+<p>A matcher is an object that stores pattern/replacement pairs. Then, this matcher can be applied onto a string: It will search the string for all stored patterns, replace them with the appropriate replacements and return the string with the included replacements.</p>
+
+<p>This is very useful to define macros that you can use anywhere in your map (for example in the tooltips of objects and in your trigger code.</p>
+
+<p>You get a new matcher by invoking the function
+<div class="docuCode">Matcher getNewMatcher<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span></div></p>
+
+<p>This new matcher contains no pattern/replacement rules yet. You can add such rules with the two functions:
+<div class="docuCode"><span class="docuCodeType">void</span> addReplacement<span class="docuCodeOp">(</span>Matcher m<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> searchFor<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> replaceWith<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+<span class="docuCodeType">void</span> addMacro<span class="docuCodeOp">(</span>Matcher m<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> searchFor<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> replaceWith<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span></div>
+They share the same signature. First they take a matcher &lt;m&gt; to which the replacement rule should be added. Then they take a pattern to &lt;searchFor&gt;. If such a pattern is found the matcher will replace it with &lt;replaceWith&gt;.</p>
+
+<p>This would be very unusefull if only plain patterns were allowed, however wildcards are allowed:</p>
+
+<p>For the &lt;searchFor&gt; string, following wildcards are allowed:</p>
+
+<p><ul class="docList"><li><b>%w</b> A word, i.e. a mixture of letters and digits. Note that only digits are also considered a word.</li><li><b>%i</b> An integer number</li><li><b>%f</b> A floating point number</li><li><b>%e</b> Everything, but reluctant</li></ul></p>
+
+<p>Note at %e: Reluctant means, that %e matches basically everything, but it will try to match as few characters as possible. So if it is surrounded by boundery characters, like for example in the pattern "|%e|", then it will try to find pattern where something is between two pipe signs (|)
+This pattern would for example match the string "|a|b|c|" twice at "|a|" and at "|c|". If %e wasn't reluctant but "greedy", it would just match once at "|a|b|c|" treating the inner two pipes as "everything".</p>
+
+<p>These wildcards can be again inserted in the &lt;replaceWith&gt; string. Here the syntax "%NUM" is used, where NUM is the number of the wildcard in the &lt;searchFor&gt; string, counted from left to right, starting with 1.
+So, if for example, &lt;searchfor&gt; was "%i %i %w" and &lt;replaceWith&gt; was "%3 %2 %1", then the matcher would, upon application, search the string for two integers followed by a word and replace them with a string that contains first the word, then the second integer, then the first integer. </p>
+
+<p>But as you can see, there are two functions: addMacro and addReplacement, so where is the difference? The difference is the behaviour:
+addReplacement will add a rule that checks for the pattern and replaces it with the replaceWith string.
+addMacro will add a rule that checks for the pattern, assembles the replacement string, treats this one as GSL code, execute it and replace the pattern with the script output of the execution of that code.
+The script output of the code is the internal buffer that is assembled with <a href="c3.html#13">the script output operator $</a>
+Note that the matcher resets this buffer before executing a replacement. So no previous content will be in the buffer, only the replacement may fill it.</p>
+
+<p>I know that is a bit complicated when explained like that, so if you don't understand that yet, read on and check the examples below, then it will hopefully get clear.</p>
+
+<p>After building the rules for a matcher, you probably also want to finally use the matcher on one (or more) strings: A single string is checked by calling:
+<div class="docuCode"><span class="docuCodeType">string</span> applyMatcher<span class="docuCodeOp">(</span>Matcher m<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> applyTo<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span></div>
+which takes a Matcher &lt;m&gt; that does the job and a string &lt;applyTo&gt; onto which the matcher is applied. The result of this function is the string, with all appearances replaced according to the predefined rules.</p>
+
+<p>Note that if two rules match on the same part of the string, then the rule that was added to the matcher first will be applied.</p>
+
+<p>Now you got everything for using the pattern matching system, so let's see some examples:</p>
+
+<p>Replacement demonstration:
+<div class="docuCode">Matcher m <span class="docuCodeOp">=</span> getNewMatcher<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//get a new matcher</span>
+addReplacement<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>i<span class="docuCodeOp">,</span><span class="docuCodeOp">%</span>i<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">@</span><span class="docuCodeOp">%</span>2<span class="docuCodeOp">,</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">@</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//add a replacement rule</span></div>
+This sets up a matcher that checks for two integer appearances between #'s seperated with a comma and swaps them and changes the separating #'s to @'s.</p>
+
+<p>Let's use this matcher:
+<div class="docuCode"><span class="docuCodeType">string</span> input <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeOp">#</span>5<span class="docuCodeOp">,</span>2<span class="docuCodeOp">#</span> bla <span class="docuCodeOp">#</span>4<span class="docuCodeOp">,</span>1<span class="docuCodeOp">#</span>"</span>	<span class="docuCodeComment">//input for the matcher</span>
+<span class="docuCodeType">string</span> output <span class="docuCodeOp">=</span> applyMatcher<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span>input<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//application result is stored in output</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>output<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+The echoed output will be "@2,5@ bla @1,4@" since that pattern was found and applied twice.</p>
+
+<p>Macro demonstration
+<div class="docuCode">Matcher m <span class="docuCodeOp">=</span> getNewMatcher<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//get a new matcher</span>
+addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>i<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span><span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">*</span>10<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//add a macro rule</span></div>	
+This rule will do the following, it will check the input for integers, surrounded by #'s. if it finds one it will insert it into the replacement expression, which multiplies it with 10 and then outputs it using the script output operator $.
+Let's use this matcher:
+<div class="docuCode"><span class="docuCodeType">string</span> input <span class="docuCodeOp">=</span> <span class="docuCodeString">"<span class="docuCodeOp">#</span>5<span class="docuCodeOp">#</span> bla <span class="docuCodeOp">#</span>2<span class="docuCodeOp">#</span>"</span>		<span class="docuCodeComment">//input for the matcher</span>
+<span class="docuCodeType">string</span> output <span class="docuCodeOp">=</span> applyMatcher<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span>input<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//application result is stored in output</span>
+<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span>output<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+This will echo "50 bla 20".</p>
+
+<p>This can be used to parse your map for macros. For convenience, two functions have been added to macros.gsl.</p>
+
+<p>The first one is the getBasicMatcher function, which gets you a matcher that checks for common patterns in maps, it uses the #'s as surroundings for macro areas. Lets check its source code:
+<div class="docuCode">Matcher getBasicMatcher<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">include</span><span class="docuCodeOp">(</span><span class="docuCodeString">"utilities<span class="docuCodeOp">.</span>gsl"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	Matcher m <span class="docuCodeOp">=</span> getNewMatcher<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span>format<span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>			<span class="docuCodeComment">//A single word a in #a# is treated as an identifier which has to be formated and then displayed</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">.</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span>format<span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">.</span><span class="docuCodeOp">%</span>2<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Two words a,b in #a.b# seperated with a point are treated as a struct name which has to be formated and then displayed</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">%</span><span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span>formatPerc<span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//Same as above, if a % is at the end the stuff should be percent formatted</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">.</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">%</span><span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span>formatPerc<span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">.</span><span class="docuCodeOp">%</span>2<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span> <span class="docuCodeComment">//Same with % and a.b</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeComment">//#%e#","%1");					//Everything else in //#a# (for triggers) is just treated as gsl code and executed</span>
+	addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>e<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">%</span>1"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>					<span class="docuCodeComment">//Everything in #a# (for non triggers) is also treated as gsl and executed</span>
+	<span class="docuCodeKeyword">return</span> m<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div>
+As you can see it gets a new matcher and adds some basic rules to it.</p>
+
+<p>To see how useful this is, lets first see the second convenience function: applyRecursive:
+<div class="docuCode"><span class="docuCodeType">int</span> applyRecursive<span class="docuCodeOp">(</span>Matcher m<span class="docuCodeOp">,</span> <span class="docuCodeType">var</span> a<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span></div></p>
+
+<p>This function applies a matcher recursive on the variable a. That means if a is a struct or array it will check all members/entries for the pattern and do the replacings. If some of the members are again structs or arrays, it will also apply recursively to them. It returns the number of strings it has checked.
+Do you get alerted? Structs that contain structs again? Exactly, the type Map is one of these! So if you use applyRecursive on your Map struct or a part of it, it will check all your map's strings for the patterns and replace them.
+But it does more: It opens <a href="c7.html#3">a namespace</a> for each struct/array it checks for scripts. So, in your macros you can for example use the name of unit values in a unit's tooltip since the namespace points to that unit's array.</p>
+
+<p>So lets get back to the basic matcher, as first rule it has:
+<div class="docuCode">addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>w<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">$</span>format<span class="docuCodeOp">(</span><span class="docuCodeOp">%</span>1<span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+So, if we use for example "#HP#" in the tooltip of a unit and apply the basic matcher on the map, then the #HP# will be unfolded to "$format(HP);" which then will be treated as GSL code. Due to applyRecursive, we are in the namespace of the unit, so HP will evaluate to the unit's Hitpoints and thus the script output will be the unit's HP (format just formats the number that it looks nice for floating point values).
+The other rules in the basic matcher add some more functionality.
+The last rule is for example:
+<div class="docuCode">addMacro<span class="docuCodeOp">(</span>m<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">#</span><span class="docuCodeOp">%</span>e<span class="docuCodeOp">#</span>"</span><span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">%</span>1"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div>
+So if the matcher finds just ANYTHING between #'s that doesn't match one of the other rules it will just treat the stuff between the #'s as GSL code and execute it. 
+With this rule you can quickly use arbitrary script areas in your map.
+If you need another example on how to use the basic matcher check out the example script buildTooltip.gsl in the script folder. It just uses the basic matcher on the entire map.</p>
+
+<p>If these basic rules look ugly to you or you need special rules, then just build your own matcher!
+You could for example specify the version of your map somewhere in the script and then add the macro "@@vers" that is just replaced by the version number or "@@home" that is replaced by the map's author's homepage. If you then use these multiple times in your map, you just have to change one script line if you want to change them all, and not search your entire map for appearances of this string.</p><div class="docuSubCapt"><a name="5">9.5 Gathering Input Parameters with Arguments and dialog.gsl</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Some kinds of scripts are only designed for one map. However, many scripts like a tooltip creation script can be designed for many maps. Nobody wants to alter the source code of the script when he wants to apply it to another map. So you want to "parameterize" your script somehow with the maps name or other parameters, like which appearance of tooltip should be chosen or other stuff.</p>
+
+<p>There are two approaches for gathering parameters:
+1)As aditional command line parameters when starting GMSI from the console.
+2)A dialog appears and asks the user to choose a map/enter a string/... .</p>
+
+<p>Both approaches have advantages. 1) allows you to call GMSI from another program without having to open the GUI. 2) is more convenient, if you are using the GUI.</p>
+
+<p>So the best and encouraged way is to combine them:
+First check if a command line parameter was specified and if not then display a dialog.</p>
+
+<p>The functions for input dialogs are defined in the library dialogs.gsl. This one is not auto included, so you have to include it yourself if you want to use it.</p>
+
+<p>Here are their declarations:
+<div class="docuCode"><span class="docuCodeType">string</span> fileDialog<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> title<span class="docuCodeOp">,</span><span class="docuCodeType">string</span> startFolder<span class="docuCodeOp">,</span><span class="docuCodeType">string</span> allowedExtensions<span class="docuCodeOp">)</span>
+<span class="docuCodeType">bool</span> confirmDialog<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> title<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> text<span class="docuCodeOp">,</span> <span class="docuCodeType">int</span> buttons<span class="docuCodeOp">)</span>
+<span class="docuCodeType">string</span> inputDialog<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> title<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> text<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> defaultValue<span class="docuCodeOp">)</span>
+<span class="docuCodeType">string</span> optionDialog<span class="docuCodeOp">(</span><span class="docuCodeType">string</span> title<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> text<span class="docuCodeOp">,</span> <span class="docuCodeType">array</span>&lt;<span class="docuCodeType">string</span>&gt; options<span class="docuCodeOp">,</span> <span class="docuCodeType">string</span> defaultValue<span class="docuCodeOp">)</span></div></p>
+
+<p><ul class="docList"><li><b>fileDialog</b> displays a dialog where the user can browse the file system and choose a file. The chosen file's path is returned or null if the user hit cancel.</li><li><b>confirmDialog</b> asks a question that can be answered with "YES/NO" "OK/CANCEL" or just informs with "OK". The boolean choice of the user is returned.</li><li><b>inputDialog</b> displays offers the user a line where he can input a string. This string will be returned or null if cancel was hit.</li><li><b>optionDialog</b> lets the user choose from a list of strings and returns the chosen string or null if cancel was pressed.</li></ul></p>
+
+<p>If you need more information just browse the library's source, it is well commented.  </p>
+
+<p>Command line parameters can be checked with the <a href="c7.html#6">external array @args</a>.</p>
+
+<p>So the encouraged way to gather parameters is like this:
+First check if the desired argument is null. If it is, then show a display.
+Example: Lets say the script takes one map which it should load. It can be entered as a command line argument if no argument is set then from a file dialog:
+<div class="docuCode"><span class="docuCodeType">string</span> inputMap<span class="docuCodeOp">;</span>	<span class="docuCodeComment">//this var will contain the desired map</span>
+<span class="docuCodeKeyword">if</span><span class="docuCodeOp">(</span><span class="docuCodeOp">@</span>args<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">!</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span><span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>	<span class="docuCodeComment">//check if a command line argument was used</span>
+	inputMap <span class="docuCodeOp">=</span> <span class="docuCodeOp">@</span>args<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//use the command line argument</span>
+<span class="docuCodeOp">}</span> <span class="docuCodeKeyword">else</span> <span class="docuCodeOp">{</span>		<span class="docuCodeComment">//if not display a dialog (restricted to .w3x files)</span>
+	inputMap <span class="docuCodeOp">=</span> fileDialog<span class="docuCodeOp">(</span><span class="docuCodeString">"Choose a map file"</span><span class="docuCodeOp">,</span><span class="docuCodeOp">@</span>inputPath<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">.</span>w3x"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>This can be written shorter using the <a href="c3.html#14">conditional expression operators</a>:
+<div class="docuCode"><span class="docuCodeType">string</span> inputmap <span class="docuCodeOp">=</span> <span class="docuCodeOp">(</span><span class="docuCodeOp">@</span>args<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">!</span><span class="docuCodeOp">=</span> <span class="docuCodeKeyword">null</span> <span class="docuCodeOp">?</span> <span class="docuCodeOp">@</span>args<span class="docuCodeOp">[</span>0<span class="docuCodeOp">]</span> <span class="docuCodeOp">:</span> fileDialog<span class="docuCodeOp">(</span><span class="docuCodeString">"Choose a map file"</span><span class="docuCodeOp">,</span><span class="docuCodeOp">@</span>inputPath<span class="docuCodeOp">,</span><span class="docuCodeString">"<span class="docuCodeOp">.</span>w3x"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span></div></p><div class="docuSubCapt"><a name="6">9.6 Other Libraries</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>There are some more libraries which are useful in some situations. They will just be listed here with their basic functionality. If you want to see how to use them, just browse the well commented source code.</p>
+
+<p><ul class="docList"><li><b>string.gsl</b> contains functions for string handling, like finding substrings in other strings, getting substrings, splitting strings around expressions and other stuff.</li><li><b>pattern.gsl</b> contains functions for matching, finding and replacing Java style regular expression patterns</li><li><b>objects.gsl</b> contains functions for dealing with object editor objects. This one can be very interesting, it contains functions like creating new ObjectEditor objects, checking ObjectIDs for their validity, getting/setting the base object a user defined object is derived from, putting objects onto the map and others...</li><li><b>io.gsl</b> contains functions for in-/output from/to external files</li><li><b>math.gsl</b> contains basic mathematical functions like random number generation, sin, cos and others</li><li><b>commaList.gsl</b> contains functions for handling comma separated lists which blizzard uses frequently to store lists of values, like the ability list of units in the object editor.</li><li><b>stopwatch.gsl</b> enables you to measure the time your script needs for execution exactly. So, for big scripts you can profile the performance of the script.</li><li><b>utilities.gsl</b> contains some miscellaneous mapping related functions</li><li><b>common.gsl</b> contains miscellaneous gsl standard functions</li><li><b>functions.gsl</b> a showcase library that shows the use of pattern.gsl and encourages user to write and submit own libraries</li></ul></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c10.html">NEXT CHAPTER</a>
+	 | <a href="c8.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

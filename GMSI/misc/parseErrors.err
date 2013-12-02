@@ -1,0 +1,169 @@
+@30: 30Insert semicolon ";" to finish previous statement
+@214:Expected: Closing Bracket ")" or Comma ","
+@158:Expected: Simple Type Name, example: "int"
+@31: 31Insert semicolon ";" to finish previous statement
+@223:Expected: Closing Bracket ")" or Comma ","
+@213: 213Insert semicolon ";" to finish previous statement
+@159:Expected one of the following:
+Derefer Operator "&"
+Comma ","
+Closing Sharp Bracket ">"
+Opening Sharp Bracket "<"
+@32: 32Insert semicolon ";" to finish previous statement
+@34: 34Insert semicolon ";" to finish previous statement
+@224:Expected: Closing Bracket ")" or Comma ","
+@160:Expected: Comma "," or Closing Sharp Bracket ">"
+@201:Expected: Simple Type Name, example: "int"
+@29: 29Insert semicolon ";" to finish previous statement
+@157:Expected: Simple Type Name, example: "int" or Closing Bracket ")"
+@100: 100Insert semicolon ";" to finish previous statement
+@203:Expected one of the following:
+Start of block statement "{"
+Comma ","
+Keyword "extern"
+@194:Expected: Simple Type Name, example: "int"
+@145: 145Insert semicolon ";" to finish previous statement
+@140: 140Insert semicolon ";" to finish previous statement
+@27: 27Insert semicolon ";" to finish previous statement
+@28: 28Insert semicolon ";" to finish previous statement
+@38: 38Insert semicolon ";" to finish previous statement
+@168:Expected: Opening Bracket "("
+@35: 35Insert semicolon ";" to finish previous statement
+@149: 149Insert semicolon ";" to finish previous statement
+@193: 193Insert semicolon ";" to finish previous statement
+@33: 33Insert semicolon ";" to finish previous statement
+@93: 93Insert semicolon ";" to finish previous statement
+@196: 196Insert semicolon ";" to finish previous statement
+@195: 195Insert semicolon ";" to finish previous statement
+@36: 36Insert semicolon ";" to finish previous statement
+@26: 26Insert semicolon ";" to finish previous statement
+@154: 154Insert semicolon ";" to finish previous statement
+@108: 108Insert semicolon ";" to finish previous statement
+@46: 46Insert semicolon ";" to finish previous statement
+@25: 25Insert semicolon ";" to finish previous statement
+@153: 153Insert semicolon ";" to finish previous statement
+@202:Expected one of the following:
+Derefer Operator "&"
+Opening Sharp Bracket "<"
+End of statement ";"
+@79:Expected: Opening Bracket "("
+@43: 43Insert semicolon ";" to finish previous statement
+@80:Expected: Simple Type Name, example: "int"
+@198:Expected: Simple Type Name, example: "int" or Closing Bracket ")"
+@144: 144Insert semicolon ";" to finish previous statement
+@41: 41Insert semicolon ";" to finish previous statement
+@97: 97Insert semicolon ";" to finish previous statement
+@142: 142Insert semicolon ";" to finish previous statement
+@162: 162Insert semicolon ";" to finish previous statement
+@103:Expected: Simple Type Name, example: "int"
+@98:Expected one of the following:
+Derefer Operator "&"
+Closing Bracket ")"
+Point
+Opening Sharp Bracket "<"
+@44: 44Insert semicolon ";" to finish previous statement
+@141: 141Insert semicolon ";" to finish previous statement
+@165: 165Insert semicolon ";" to finish previous statement
+@102: 102Insert semicolon ";" to finish previous statement
+@37: 37Insert semicolon ";" to finish previous statement
+@101:Expected: Opening Bracket "("
+@222:Expected: End of statement ";"
+@40: 40Insert semicolon ";" to finish previous statement
+@99:Expected one of the following:
+Opening Bracket "("
+Closing Bracket ")"
+Point
+@104:Expected: WordTypetostr
+@182:Expected: Closing Bracket ")"
+@137: 137Insert semicolon ";" to finish previous statement
+@221:Expected one of the following:
+Derefer Operator "&"
+Comma ","
+Closing Sharp Bracket ">"
+Opening Sharp Bracket "<"
+@179:Expected one of the following:
+Assignment "="
+Colon ":"
+End of statement ";"
+@78:Expected: End of statement ";"
+@42: 42Insert semicolon ";" to finish previous statement
+@178: 178Insert semicolon ";" to finish previous statement
+@183:Expected: Assignment "=" or End of statement ";"
+@139: 139Insert semicolon ";" to finish previous statement
+@218:Expected: Start of block statement "{"
+@219:Expected: Simple Type Name, example: "int"
+@39: 39Insert semicolon ";" to finish previous statement
+@220:Expected: Start of block statement "{"
+@0:Expected: START
+@138: 138Insert semicolon ";" to finish previous statement
+@62:Expected: Opening Bracket "("
+@190:Expected: Closing Bracket ")" or Comma ","
+@235:Expected: Closing Bracket ")" or Comma ","
+@171:Expected: Simple Type Name, example: "int"
+@118:Expected: Comma "," or Keyword "extern"
+@225:Expected: Start of block statement "{" or Comma ","
+@124: 124Insert semicolon ";" to finish previous statement
+@169:Expected: Opening Bracket "("
+@1:Expected: EOF
+@189:Expected: Start of block statement "{"
+@68:Expected: Opening Bracket "(" or Point
+@58: 58Insert semicolon ";" to finish previous statement
+@119:Expected: Closing Bracket ")"
+@172:Expected: Simple Type Name, example: "int"
+@191:Expected: Closing Bracket ")" or Comma ","
+@192:Expected: Closing Bracket ")" or Comma ","
+@57: 57Insert semicolon ";" to finish previous statement
+@120:Expected: WordTypetostr
+@163:Expected: Closing Bracket ")" or Comma ","
+@136:Expected: Opening Bracket "("
+@199:Expected: Simple Type Name, example: "int"
+@161: 161Insert semicolon ";" to finish previous statement
+@53: 53Insert semicolon ";" to finish previous statement
+@65:Expected: Assignment "=" or End of statement ";"
+@233: 233Insert semicolon ";" to finish previous statement
+@116:Expected one of the following:
+Simple Type Name, example: "int"
+Derefer Operator "&"
+Var or Function Name
+Opening Sharp Bracket "<"
+@125: 125Insert semicolon ";" to finish previous statement
+@239:Expected: End of statement ";"
+@67:Expected: Simple Type Name, example: "int"
+@76:Expected: End of statement ";"
+@45: 45Insert semicolon ";" to finish previous statement
+@238:Expected: End of statement ";"
+@56: 56Insert semicolon ";" to finish previous statement
+@107: 107Insert semicolon ";" to finish previous statement
+@48: 48Insert semicolon ";" to finish previous statement
+@187: 187Insert semicolon ";" to finish previous statement
+@73:Expected: Opening Bracket "("
+@70: 70Insert semicolon ";" to finish previous statement
+@106: 106Insert semicolon ";" to finish previous statement
+@47: 47Insert semicolon ";" to finish previous statement
+@131:Expected one of the following:
+Derefer Operator "&"
+Var or Function Name
+Opening Sharp Bracket "<"
+@210: 210Insert semicolon ";" to finish previous statement
+@175: 175Insert semicolon ";" to finish previous statement
+@130:Expected: String Literal
+@66:Expected: Simple Type Name, example: "int"
+@185: 185Insert semicolon ";" to finish previous statement
+@215: 215Insert semicolon ";" to finish previous statement
+@51: 51Insert semicolon ";" to finish previous statement
+@151: 151Insert semicolon ";" to finish previous statement
+@72:Expected: Opening Bracket "("
+@135: 135Insert semicolon ";" to finish previous statement
+@71:Expected: Opening Bracket "("
+@49: 49Insert semicolon ";" to finish previous statement
+@134: 134Insert semicolon ";" to finish previous statement
+@147: 147Insert semicolon ";" to finish previous statement
+@152:Expected: Closing Bracket ")" or Comma ","
+@52: 52Insert semicolon ";" to finish previous statement
+@170:Expected: Start of block statement "{" or Keyword "extends"
+@50: 50Insert semicolon ";" to finish previous statement
+@148: 148Insert semicolon ";" to finish previous statement
+@173:Expected: End of statement ";"
+@133: 133Insert semicolon ";" to finish previous statement
+@174: 174Insert semicolon ";" to finish previous statement
+@69: 69Insert semicolon ";" to finish previous statement

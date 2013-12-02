@@ -1,0 +1,218 @@
+/**
+*	This file contains useful functions and system calls for handling objects.
+*	Like for example getting the object an object is derived from, creating or placing new objects, dps calculation
+*	and validisation of Object IDs
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.2
+*	@date 2008
+*	@type Library
+*
+*/
+
+
+
+
+/**
+*	Gets you the next free objectId starting from the id <startId>.
+*
+*	If startId is a predefined object id, it will return the
+*	next user defined id that shares the first letter with it.
+*
+*	If startId is a user defined object id, it will return
+*	the next free user defined id starting to count at <startId>
+*
+*	If you enter a malformed id, the function will throw an error
+*
+*	Examples:
+*	startId: hpea (predefined)
+*	result: h004 (if h000,h001,h002,h003 are already in use in your map <mapHandle>)
+*
+*	startId: h015 (user defined)
+*	result: h017 (if h015,h016 are already in use)
+*
+*	startId: hi8de (invalid)
+*	result: error -> script termination
+*/
+string getFreeId(Map mapHandle,string startId){
+	if(mapHandle.objects == null) fail("you must load the objects of your map before you can use <getFreeId>");
+	return trap("getFreeId");
+}
+
+/**
+*	Returns the integer value of an object id
+*   Example: A000 -> 1093677104
+*/
+native int objectId2Int(string objId);
+
+/**
+*	Returns the object id corresponding to an integer
+*   Example: 1093677104 -> A000
+*/
+native string int2ObjectId(int objIdInt);
+
+/**
+*	This very mighty function can be used to create new objects in your map.
+*	However you should read this comment carefully or you might crash your map!
+*	createObject creates a new Object derived from the object with the id <baseId>.
+*	It gets the id <newId> and is inserted into the specified map.
+*	If an object with id <newId> already exists and <overwrite> is set, than that object will be overwritten.
+*	If <overwrite> is not set it will throw an error thus stopping script execution.
+*
+*	The parameter <baseId> must be a valid baseId, i.e. the id of a predefined wc3 object
+*
+*	The parameter <newId> must be a valid custom Id, i.e. NOT a predefined wc3 object id.
+*	It must be well formed, i.e. four letters only letters and digits.
+*
+*	The function is fail-safe, so it will always crash, if a parameter is malformed and will NOT entry malformed
+*	objects into your map!
+*/
+Wc3obj createObject(Map mapHandle, string baseId, string newId, bool overwrite){
+	if(mapHandle.objects == null) fail("you must load the objects of your map before you can use <createObject>");
+	return trap("createObject");
+}
+
+Wc3obj createObject (Map mapHandle, string baseId){
+	return createObject(mapHandle,baseId,getFreeId(mapHandle,baseId),false);
+}
+
+/**
+*	Returns if an id is valid, i.e. if it is an id that does not crash the editor when used for an object
+*/
+native bool isIdValid(string objId);
+
+/**
+*	Returns if this id is predefined, i.e. if it belongs to an object that is already in the World Editor and not self defined
+*/
+native bool isIdPredefined(string objId);
+
+/**
+*	Returns if this id is custom, i.e. if it belongs to an object that is defined by the user
+*/
+bool isIdCustom(string objId){
+	return !isIdPredefined(objId);
+}
+
+/**
+*	Returns the unchanged id of this wc3object
+*	WARNING: If you rename the object id (i.e. move it to another entry, the old id will be the one returned
+*/
+native string getObjectId(Wc3obj obj);
+
+/**
+*	Returns the base Id of the object, i.e. the object from which this object is derived from or
+*	its own id if this object is a base object
+*/
+native string getBaseId(Wc3obj obj);
+
+/**
+*	Changes the object this object is derived from to <newId>
+*/
+object setParentObject(Wc3obj toChange, Wc3obj newId, bool overwrite){
+	return toChange;
+}
+
+/**
+*	Places a unit with ID <unitID> onto the map <map> at the coordinates x,y,z for player <owner> facing towards <rotation> (in radians).
+*/
+PlacedObject placeUnit(Map map,string unitID,float x, float y, float z, int owner, float rotation){
+	
+	//check if necessary files are loaded
+	if(map.placed.objects == null) fail("Can't use function <placeUnit> without loading the placed objects of a map");
+	if(map.objects == null) fail("Can't use function <placeUnit> without loading the objects of a map");
+	
+	//Does the specified unit exist and is it a unit?
+	if(map.objects[unitID] == null) fail("Place Unit Error: The ID \"" + unitID + "\" does not exist in your map, can't place that unit!");
+	if(!(map.objects[unitID] instanceof Unit)) fail("Place Unit Error: The ID \"" + unitID + "\" is not of type unit in your map, can't place that object!");
+	
+	
+	//create unit and assign base values
+	PlacedObject o = PlacedObject();
+	o.x = x;
+	o.y = y;
+	o.z = z;
+	o.rotation = rotation;
+	o.owner = owner;
+	o.typeID = unitID;
+	
+	//Does this unit have mana? If so, set manaPoints to -1 (use default)
+	if(map.objects[unitID].manaN > 0) o.manaPoints = -1;
+	
+	//Put the created unit into the map and return it
+	map.placed.objects[] = o;
+	return o;
+}
+
+/**
+*	Gets all placed units and items in rect <where>
+*/
+array<PlacedObject> getObjectsInRect(Map map,Rect where){
+	array<PlacedObject> result = array();
+	
+	array o = map.placed.objects;
+	for(int i:o){
+		float x = o[i].x;
+		float y = o[i].y;
+		if(x >= where.left && x <= where.right && y >= where.bottom && y <= where.top) result[] = o[i];
+	}
+	
+	return result;
+}
+
+//Same for doods
+array<PlacedDood> getDoodsInRect(Map map,Rect where){
+	array<PlacedDood> result = array();
+	
+	array o = map.placed.doods;
+	for(int i:o){
+		float x = o[i].x;
+		float y = o[i].y;
+		if(x >= where.left && x <= where.right && y >= where.bottom && y <= where.top) result[] = o[i];
+	}
+	
+	return result;
+}
+//gets doods & objects
+include("common.gsl");
+array getWidgetsInRect(Map map, Rect where){
+	array a = array();
+	appendArray(a,getObjectsInRect(map,where));
+	return appendArray(a,getDoodsInRect(map,where));
+}
+
+/**
+*	Calculates the dps of a unit's first attack
+*/
+float dps(Unit unit){
+	//Base damage
+	float result = (float)unit.dmgplus1;
+	
+	//Dice bonus
+	result += ((float)((1+unit.sides1)*unit.dice1))/2;
+	
+	//cooldown
+	result /= unit.cool1;
+	
+	return result;
+}
+
+/**
+*	Calculates the dps of a unit, you can choose if you want its fist or second attack with the parameter <atk>
+*/
+float dps(Unit unit, int atk){
+    if (atk > 2 || atk < 1) fail("Wrong call of function \"dps\", second parameter must be between 1 and 2");
+	
+	//Base damage
+	float result = (float)unit["dmgplus" + atk];
+	
+	//Dice bonus
+	result += ((float)((1+unit["sides" + atk])*unit["dice" + atk]))/2;
+	
+	//cooldown
+	result /= unit["cool" + atk];
+	
+	return result;
+}
+

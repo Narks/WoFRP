@@ -1,0 +1,1 @@
+"c:\Program Files (x86)\Java\jre7\bin\java.exe" -Xmx512m -jar "C:\war3dev\GMSI\GMSI.jar"

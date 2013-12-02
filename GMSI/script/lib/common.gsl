@@ -1,0 +1,142 @@
+/**
+*	This library contains useful miscallaneous functions.
+*	(Array sorting, array concatenation ...)
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2009
+*	@type Library
+*/
+
+/**
+*	Appends the int entries from the array <append> at the end of the array <appendTo> concatenating both arrays
+*/
+array appendArray(array appendTo, array append){
+	if(appendTo == null) fail("Cannot append to null");
+	for(int i: append){
+		appendTo[] = append[i];
+	}
+	return appendTo;
+}
+
+/**
+*	Returns the part of an arrary <input>, that reaches from index <startIndex> to <endIndex> - 1.
+*	Note that all keys inbetween are assumed to be present
+*/
+array subArray(array input, int startIndex, int endIndex){
+	array result = array();
+	for(int i = startIndex; i<endIndex; i++){
+		result[] = input[i];
+	}
+	return result;
+}
+
+/**
+*	Uses mergesort to sort an array <toSort>
+*
+*	If <key> is null, then the array entries will be compared to each other
+*	for sorting. If <key> is not null, a submember/entry named <key> will
+*	be used for sorting (makes only sence if the array consists of arrays/structs)
+*
+*	If <ascending> is set, then the sorting will be in ascending order, otherwise in descending order
+*
+*	Note: I was too lazy to implement an iterative function, so I did it recursive. If you want
+*	less space consumption, code an iterative implementation yourself ;).
+*
+*/
+array sortArray(array toSort, string key, bool ascending){
+	int siz = size(toSort);
+	if(siz<=1) return toSort;
+	array part1 = sortArray(subArray(toSort,0,siz/2),key);
+	array part2 = sortArray(subArray(toSort,siz/2,siz),key);
+	
+	int index1 = 0;
+	int index2 = 0;
+	array result = array();
+	while(true){
+		if(part1[index1] == null){
+			if(part2[index2]==null) return result;
+			result[] = part2[index2++];
+			continue;
+		}
+		if(part2[index2] == null){
+			if(part1[index1]==null) return result;
+			result[] = part1[index1++];
+			continue;
+		}
+		if(key != null){
+			if(ascending){
+				if(part1[index1][key] < part2[index2][key]){
+					result[] = part1[index1++];
+				} else {
+					result[] = part2[index2++];
+				}
+			} else {
+				if(part1[index1][key] > part2[index2][key]){
+					result[] = part1[index1++];
+				} else {
+					result[] = part2[index2++];
+				}
+				
+			}
+			
+		} else {
+			if(ascending){
+				if(part1[index1] < part2[index2]){
+					result[] = part1[index1++];
+				} else {
+					result[] = part2[index2++];
+				}
+			} else {
+				if(part1[index1] > part2[index2]){
+					result[] = part1[index1++];
+				} else {
+					result[] = part2[index2++];
+				}
+			}
+		}
+	}
+	
+	return result;
+	
+	
+}
+
+/**
+*	Sorts an array <toSort> comparing <key> in ascending order (see the upper sort function for more information)
+*/
+array sortArray(array toSort, string key){
+	return sortArray(toSort,key,true);
+}
+
+/**
+*	Sorts an array <toSort> in ascending order
+*/
+array sortArray(array toSort){
+	return sortArray(toSort,null,true);
+}
+
+/**
+*	Sorts an array, either in ascending or descending order
+*/
+array sortArray(array toSort, bool ascending){
+	return sortArray(toSort,null,ascending);
+}
+
+/**
+*	Functions from copying all entries of one array to another one.
+*/
+void copyIntArray(array from, array to){
+	for(int i: from) to[i] = from[i];
+}
+
+void copyStrArray(array from, array to){
+	for(string s: from) to[s] = from[s];
+}
+
+void copyArray(array from, array to){
+	for(int i: from) to[i] = from[i];
+	for(string s: from) to[s] = from[s];
+}

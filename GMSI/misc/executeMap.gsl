@@ -1,0 +1,35 @@
+/**
+*	This file is executed when you execute a map
+*	
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2008
+*	@type Library
+*/
+
+global Map map = loadMap(@map); //Loads the map which was executed
+
+
+//Search the trigger named script.ini
+array a = map.script.triggers;
+Trigger scriptIni = null;
+for(int i: a){
+	if(a[i].name=="script.ini"){
+		scriptIni = a[i];
+		break;
+	}
+}
+
+//No script.ini found? ERROR!
+if(scriptIni==null) fail("No trigger named \"script.ini\" found in the map " + map.fileName);
+
+//Script.ini is no trigger comment? ERROR!
+if(!scriptIni.isComment) fail("The trigger named \"script.ini\" must be a comment, but in this map, it is no comment!");
+
+//sets the script path to this map's path that it can call libraries that are stored in the same folder as the map
+setScriptPath(@map);
+
+//Execute script.ini's comment as GSL code
+eval(scriptIni.comment,"script.ini");

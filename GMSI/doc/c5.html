@@ -1,0 +1,78 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c6.html">NEXT CHAPTER</a>
+	 | <a href="c4.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">5. Functions</div></p><div class="docuSubCapt"><a name="1">5.1 Defining Functions</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Before a function can be called it has to be defined.
+A function definition consists of following parts:
+<ul class="docList"><li>return type</li><li>function name</li><li>list of parameters passed to the function</li><li>function body</li></ul></p>
+
+<p>The syntax is:
+<div class="docuCode">returnType functionName<span class="docuCodeOp">(</span>param1Type param1Name<span class="docuCodeOp">,</span> param2Type param2Name<span class="docuCodeOp">,</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	functionBody
+<span class="docuCodeOp">}</span></div></p>
+
+<p><b>returnType:</b>
+The method's return type, i.e. the data type of the value, that the function returns. 
+This can be void, then the function returns no value.</p>
+
+<p><b>functionName:</b>
+The function's name. Note that also type names are allowed as function names, but only if the function takes at least one parameter (if it takes no parameter, a type name followed by () is reserved for the constructors like array()). This can be used to write parameterized constructors for your struct types. Example for Point2D:
+<div class="docuCode"><span class="docuCodeKeyword">typedef</span> Point2D <span class="docuCodeType">struct</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeType">int</span> x<span class="docuCodeOp">;</span>
+	<span class="docuCodeType">int</span> y<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span>
+Point2D Point2d<span class="docuCodeOp">(</span><span class="docuCodeType">int</span> x<span class="docuCodeOp">,</span> <span class="docuCodeType">int</span> y<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>	<span class="docuCodeComment">//Parameterized constructor for Point2D</span>
+	Point2D result <span class="docuCodeOp">=</span> Point2D<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	result<span class="docuCodeOp">.</span>x <span class="docuCodeOp">=</span> x<span class="docuCodeOp">;</span>
+	result<span class="docuCodeOp">.</span>y <span class="docuCodeOp">=</span> y<span class="docuCodeOp">;</span>
+	<span class="docuCodeKeyword">return</span> result<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>In GSL two functions can have the same name if they have a different signature, i.e. the types (not the names!) of their parameters have to differ. This is called overloading. We can use overloading for example to define functions for different data types, but with the same name (see example below). </p>
+
+<p><b>list of parameters:</b>
+The parameters that are passed to this function. Each parameter must first have its data type declared, followed by the name of the parameter. Parameters are seperated by a comma. The function may also take no parameters, then you can only write ().</p>
+
+<p><b>Function Body:</b>
+These are just arbitrary statements that define the function's behaviour. The statement "return RETURNVALUE;" may be used to leave the function, returning the value &lt;RETURNVALUE&gt; (which must be of the type &lt;returnType&gt;).
+If the returnType is void, then you can use "return;" to return without a value. The function MUST return a value if it isn't declared void. If it is declared void and no return is executed until the function body's end is reached, the function returns implicitly.</p>
+
+<p>Examples:
+Function with no parameters and no return value:
+<div class="docuCode"><span class="docuCodeType">void</span> printLol<span class="docuCodeOp">(</span><span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>
+	<span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"lol"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>
+	<span class="docuCodeKeyword">return</span><span class="docuCodeOp">;</span>		<span class="docuCodeComment">//May be omitted, since return type is void</span>
+<span class="docuCodeOp">}</span></div></p>
+
+<p>Integer, float addition as a function
+<div class="docuCode"><span class="docuCodeType">int</span> add<span class="docuCodeOp">(</span><span class="docuCodeType">int</span> i<span class="docuCodeOp">,</span> <span class="docuCodeType">int</span> j<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>	<span class="docuCodeComment">//signature: (int,int)</span>
+	<span class="docuCodeKeyword">return</span> i <span class="docuCodeOp">+</span> j<span class="docuCodeOp">;</span>		<span class="docuCodeComment">//May not be omitted, since the function must return an int</span>
+<span class="docuCodeOp">}</span>
+ 
+<span class="docuCodeType">float</span> add<span class="docuCodeOp">(</span><span class="docuCodeType">float</span> i<span class="docuCodeOp">,</span> <span class="docuCodeType">float</span> j<span class="docuCodeOp">)</span><span class="docuCodeOp">{</span>	<span class="docuCodeComment">//Overloaded function, same name, but different signature: (float,float)</span>
+	<span class="docuCodeKeyword">return</span> i <span class="docuCodeOp">+</span> j<span class="docuCodeOp">;</span>
+<span class="docuCodeOp">}</span></div></p><div class="docuSubCapt"><a name="2">5.2 Calling Functions</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Functions are called by their name, followed with parameters handed to the function, surrounded by brackets, seperated by commas:
+<div class="docuCode">funcName<span class="docuCodeOp">(</span>param1<span class="docuCodeOp">,</span>param2<span class="docuCodeOp">,</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">.</span><span class="docuCodeOp">)</span></div>
+Such a call is an expression that evaluates to the value, that the function returns. So it can either be used in a more complex expression or be terminated with a comma and become a statement. No special keyword like "call" is needed then.
+Functions that return void can only be used as a statement. </p>
+
+<p>Function parameter types have to match exactly the ones in the declaration for type safety purposes. So, no implicit casting is done here, you have to cast all parameters explicitly to the desired type.</p>
+
+<p>Examples:
+<div class="docuCode"><span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeString">"abc"</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Calling the echo function with parameter "abc"</span></div></p>
+
+<p><div class="docuCode"><span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span><span class="docuCodeOp">)</span>add<span class="docuCodeOp">(</span>5<span class="docuCodeOp">,</span>3<span class="docuCodeOp">)</span><span class="docuCodeOp">)</span><span class="docuCodeOp">;</span>	<span class="docuCodeComment">//Using the add function inside the echo function. Have to cast to string, since no implicit casting is done on function parameters</span></div></p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c6.html">NEXT CHAPTER</a>
+	 | <a href="c4.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

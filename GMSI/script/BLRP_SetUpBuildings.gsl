@@ -1,0 +1,20 @@
+// This scirpt should set up all the structures.
+void DoStuff()
+{
+	for (string s: map.objects)
+	{
+		Wc3obj myObject = map.objects[s];
+		if (myObject instanceof Unit)
+		{
+			echoln(myObject.Name);
+			
+			if (myObject.spd == 0 && myObject.turnRate == 0)
+			{
+				myObject.spd = 1;
+				myObject.turnRate = 1;
+			}
+			
+		}
+	}
+}
+

@@ -1,0 +1,78 @@
+/**
+*	This script injects GMSI into the Jass New Gen Pack adding a GMSI menu in your JNGP editor which allows convenient
+*	acess to some GMSI functionalities.
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.0
+*	@date 2009
+*	@param Your NewGen WE.exe
+*/
+
+include("dialog.gsl");
+include("io.gsl");
+include("string.gsl");
+typedef Reader, Writer extern;
+
+string injectStr = 
+  " 	wehack.addmenu(\"UMSWE\")\n"
++ "end\n"
++ "--begin GMSI inject\n"
++ "gmsimenu = wehack.addmenu(\"GMSI\")\n"
++ "	function gmsi_exec()\n"
++ "	  	wehack.runprocess(\"GMSI.bat \\\\\"\".. wehack.findmappath() .. \"\\\\\"\")\n"
++ "	end\n"
++ "	function gmsi_screen()\n"
++ "	  	wehack.runprocess(\"GMSI.bat \\\\\"script\\\\\\\\takeScreenshot.gsl\\\\\" \\\\\"1000\\\\\"\")\n"
++ "	end\n"
++ " function gmsi_pick()\n"
++ "	  	wehack.execprocess(\"gmsi\\\\\\\\Color Picker.exe" + "\")\n"
++ "	end\n"
++ "\n"
++ "	\n"
++ "gmsi_start = MenuEntry:New(gmsimenu,\"Execute this map's script.ini\",gmsi_exec)\n"
++ "gmsi_screenshot = MenuEntry:New(gmsimenu,\"Take screenshot\",gmsi_screen)\n"
++ "wehack.addmenuseparator(gmsimenu)\n"
++ "gmsi_colorpick = MenuEntry:New(gmsimenu,\"Color picker\",gmsi_pick)\n"
++ "--end GMSI inject";
+
+
+
+string jngp = (@args[0] == null?fileDialog("Enter your JNGP folder (select the wehack.lua in it)",@inputPath,"wehack.lua"):@args[0]); 
+
+if(jngp==null) fail("You haven't selected your wehack.lua!");
+Reader r = openFileRead(jngp);
+string cont = readString(r);
+closeFile(r);
+
+if(find(cont,"--begin GMSI inject")!=null){
+	warn("GMSI is already injected into this JNGP. Updating injection!");
+	
+	cont = replace(cont,"\\-\\-begin GMSI inject.*?\\-\\-end GMSI inject","");
+}
+
+echoln("Injecting GMSI commands...");
+cont = replace(cont,"wehack\\.addmenu\\(\\\"UMSWE\\\"\\).*?end",injectStr);
+Writer w = openFileWrite(jngp,false);
+write(w,cont);
+closeFile(w);
+
+echoln("Generating GMSI.bat...");
+string batStr = 	
+substr(@appPath,0,2) + "\n"
++"chdir " + @appPath + "\n"
++"start javaw -Xmx512m -jar GMSI.jar %1 %2\n"
++"PAUSE";
+
+Match m = find(jngp,"(.*)wehack\\.lua");
+string folder = m.groups[1];
+w = openFileWrite(folder + "GMSI.bat",false);
+write(w,batStr);
+closeFile(w);
+
+echoln("Copying color picker...");
+copyFile("misc/Color Picker.exe",folder + "gmsi/Color Picker.exe", true);
+
+echoln("=== DONE! GMSI has been successfully injected into the JNGP. Have fun ==="); 
+

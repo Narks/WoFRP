@@ -1,0 +1,59 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./style/style.css">
+</head>
+<body><table width="100%"><tr><td><div class="docu">
+<a name="top"></a>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c7.html">NEXT CHAPTER</a>
+	 | <a href="c5.html">PREVIOUS CHAPTER</a>
+</div>
+<p><div class="docuCapt">6. Basic System Calls</div></p>
+
+<p>Basic System Calls are useful functions (like the echo function) that are defined in the essentials.gsl. This file is included automatically, so you don't have to include it if you wish to use one of these functions. System Calls refer to internal JAVA functionalities (that's why I called 'em system calls), they are only partly written in GSL.
+They are of such a great use that you should know them. So I list them here:</p><div class="docuSubCapt"><a name="1">6.1 echo</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">string</span> <span class="docuCodeKeyword">echo</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> message<span class="docuCodeOp">)</span></div></p>
+
+<p>This function prints the string &lt;message&gt; onto the console and returns it. Useful for debugging purposes or status reports.</p><div class="docuSubCapt"><a name="2">6.2 echoln</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">string</span> <span class="docuCodeKeyword">echoln</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> message<span class="docuCodeOp">)</span></div></p>
+
+<p>Does the same thing like echo, but adds a new line character after message.</p><div class="docuSubCapt"><a name="3">6.3 warn</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">string</span> <span class="docuCodeKeyword">warn</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> message<span class="docuCodeOp">)</span></div></p>
+
+<p>This function prints the string &lt;message&gt; onto the console as a warning (highlighted) and returns it. Useful for debugging purposes or status reports. Note that it adds new line after &lt;message&gt;.</p><div class="docuSubCapt"><a name="4">6.4 fail</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">void</span> <span class="docuCodeKeyword">fail</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> message<span class="docuCodeOp">)</span></div></p>
+
+<p>The fail function immediatly stops script execution by throwing an error with message &lt;message&gt;.
+It can be used to stop the script in case of malicious input.</p><div class="docuSubCapt"><a name="5">6.5 sleep</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">void</span> <span class="docuCodeKeyword">sleep</span><span class="docuCodeOp">(</span><span class="docuCodeType">int</span> millisec<span class="docuCodeOp">)</span></div></p>
+
+<p>Sleep stops the script execution for &lt;millisec&gt; milliseconds.</p><div class="docuSubCapt"><a name="6">6.6 include</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">void</span> <span class="docuCodeKeyword">include</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> fileName<span class="docuCodeOp">)</span></div></p>
+
+<p>Include loads and executes the script file &lt;fileName&gt;. It searches for the file in the following folders:</p>
+
+<p><ul class="docList"><li>the folder of the script it is called from</li><li>the script folder</li><li>the script/lib folder</li></ul></p>
+
+<p>If the script file isn't found an error is thrown. If include is called more than once for a file, then it is
+only included the first time include is called for it. So you don't have to care, if a file is included somewhere else.
+If you need it, you can just include it.</p><div class="docuSubCapt"><a name="7">6.7 eval</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">void</span> <span class="docuCodeKeyword">eval</span><span class="docuCodeOp">(</span><span class="docuCodeType">string</span> code<span class="docuCodeOp">)</span></div></p>
+
+<p>Eval executes the string &lt;code&gt; as gsl code.</p><div class="docuSubCapt"><a name="8">6.8 size</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">int</span> <span class="docuCodeKeyword">size</span><span class="docuCodeOp">(</span><span class="docuCodeType">array</span> ary<span class="docuCodeOp">)</span></div></p>
+
+<p>Size returns the size of an array &lt;ary&gt;. I.e. the number of int-keys + the number of string-keys.</p><div class="docuSubCapt"><a name="9">6.9 clone</a><br /><span class="top"><a href="#top">TO TOP</a> | <a href="index.html">TO INDEX</a></span></div><p>Declaration:
+<div class="docuCode"><span class="docuCodeType">var</span> <span class="docuCodeKeyword">clone</span><span class="docuCodeOp">(</span><span class="docuCodeType">var</span> i<span class="docuCodeOp">)</span></div></p>
+
+<p>Clone takes arbitrary data (except object) and returns a flat copy of it. So:
+if &lt;i&gt; is of type int,string,float,boolean i is just returned.
+if &lt;i&gt; is of type struct or array a new instance of the type of &lt;i&gt; is created and all members/key-value-pairs are copied to the new one.
+This can be used for by value calls of arrays and structs (See also: <a href="c3.html#2">By Reference / By Value</a>).</p>
+<div class="docuNavi">Navigation:<br />
+	<a href="index.html">INDEX</a>
+	 | <a href="c7.html">NEXT CHAPTER</a>
+	 | <a href="c5.html">PREVIOUS CHAPTER</a>
+</div>
+</div></td></tr></table></body>
+</html>

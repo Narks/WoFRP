@@ -1,0 +1,119 @@
+/**
+*	This file contains functions for loading and saving a WC3 map
+*
+*	DON'T CHANGE THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING, OR BAAAAD THINGS MAY HAPPEN
+*
+*	@author gex
+*	@home http://www.eeve.org
+*	@mail gekko_tgh@gmx.de
+*	@version 1.1
+*	@date 2008
+*	@type Library
+*/
+
+typedef Map extern;
+
+global Map _lastOpenedMap;
+
+/**
+* Opens a map from the file mapName and returns a struct that contains the map data
+*/
+Map openMap(string mapName){
+	_lastOpenedMap = trap("openMap");
+	return _lastOpenedMap;
+}
+
+/**
+*	Saves a map to a destination file
+*	DOESN'T SAVE ANY PARTS OF THE MAP, just the file and some necessary info!
+*	You have to save other things manually before, if you want them to be updated
+*	Use saveMap() for convenience, not this function!
+*
+*/
+native void saveMapToFile(Map map,string outputName);
+
+/**
+*	Loads the object editor objects of a map. If loadUnchangedObjects == true, then also objects with no changes (objects which are not purple in the Object Editor) are loaded
+*/
+native void loadObjects(Map map, bool loadUnchangedObjects);
+native void saveObjects(Map map);
+
+native void loadPlacedObjects(Map map);
+native void savePlacedObjects(Map map);
+
+native void loadPlacedDoodads(Map map);
+native void savePlacedDoodads(Map map);
+
+native void loadEnvironment(Map map);
+native void saveEnvironment(Map map);
+
+native void loadTriggers(Map map);
+native void saveTriggers(Map map);
+
+native void loadRects(Map map);
+native void saveRects(Map map);
+
+native void loadSounds(Map map);
+native void saveSounds(Map map);
+
+native void loadImports(Map map);
+native void saveImports(Map map);
+
+/**
+*	Loads a map and returns a struct that contains its data
+*	You can choose which parts of the map should be loaded by setting the appropriate bools to true (do load) or false (do not load)
+*/
+Map loadMap(string mapName,	bool loadObjects, bool loadPlacedObjects,
+			bool loadPlacedDoodads,	bool loadTriggers, bool loadRects,
+			bool loadSounds, bool loadImports, bool loadEnvironment,bool loadUnchangedObjects){
+
+	Map result = openMap(mapName);
+	if(loadObjects) 		loadObjects(result,loadUnchangedObjects);
+	if(loadPlacedObjects)	loadPlacedObjects(result);
+	if(loadPlacedDoodads)	loadPlacedDoodads(result);
+	if(loadTriggers)		loadTriggers(result);
+	if(loadRects)			loadRects(result);
+	if(loadSounds)			loadSounds(result);
+	if(loadImports)			loadImports(result);
+	if(loadEnvironment)		loadEnvironment(result);
+	return result;		
+}
+
+/**
+*	Loads a map and returns a struct that contains its data
+*	Loads everything but the environment. You can choose if the environment should be loaded with the boolean value
+*/
+Map loadMap(string mapName, bool loadEnvironment, bool loadUnchangedObjects){
+	return loadMap(mapName,true,true,true,true,true,true,true,loadEnvironment, loadUnchangedObjects);
+}
+
+
+/**
+*	Loads a map and returns a struct that contains its data
+*	Loads everything but the environment.
+*	(The environment, since it contains the whole heightmap of this map, can be very large and take long to load/save, so it is not loaded by default)
+*/
+Map loadMap(string mapName){
+	return loadMap(mapName,false,true);
+}
+
+/**
+*	Saves the entire map to <outputName>
+*	including all sections that were previously loaded
+*
+*/
+void saveMap(Map map,string outputName){
+	if(map.objects != null) saveObjects(map);
+	if(map.placed != null){
+		if(map.placed.objects != null) savePlacedObjects(map);
+		if(map.placed.doods != null) savePlacedDoodads(map);
+	}
+	if(map.script != null) saveTriggers(map);
+	if(map.rects != null) saveRects(map);
+	if(map.sounds != null) saveSounds(map);
+	if(map.imports != null) saveImports(map);
+	if(map.environment != null) saveEnvironment(map);
+	saveMapToFile(map,outputName);
+}
+
+
